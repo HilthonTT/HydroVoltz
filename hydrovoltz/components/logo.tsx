@@ -16,7 +16,7 @@ export const Logo = ({ className }: LogoProps) => {
           "h-28 w-28 relative bg-white rounded-full border-2 border-gray-500 dark:border-0",
           className
         )}>
-        <Image src="./logo.svg" alt="Logo" className="object-cover" fill />
+        <Image src="/logo.svg" alt="Logo" className="object-cover" fill />
       </div>
       <div className="hidden lg:block text-center">
         <p className="text-2xl font-semibold">HydroVoltz</p>
