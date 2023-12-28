@@ -1,16 +1,22 @@
 "use client";
 
-import { Glasses, HardHat } from "lucide-react";
+import { Glasses, Hammer, HardHat } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 
-import { Logo } from "./navbar/logo";
-
 export const Footer = () => {
+  const currentYear = new Date().getFullYear();
+
   return (
     <div className="fixed bottom-0 w-full p-4 bg-secondary">
       <div className="flex items-center justify-between w-full">
-        <Logo className="h-10 w-10" />
+        <div className="flex items-center text-muted-foreground gap-x-2">
+          <Hammer className="h-4 w-4" />
+          <p className="text-xs hidden lg:block">
+            @{currentYear} HydroVoltz Corporation. HydroVoltz is amongst our
+            registered and unregistered trademarks in Europe.
+          </p>
+        </div>
         <div className="flex items-center justify-between space-x-4 transition">
           <Button
             variant="ghost"

@@ -9,9 +9,9 @@ import {
 } from "lucide-react";
 
 import { Logo } from "@/components/logo";
+import { Button } from "@/components/ui/button";
 
 import { FeatureCard } from "./_components/feature-card";
-import { Button } from "@/components/ui/button";
 
 const MarketingPage = async () => {
   const user = await currentUser();
@@ -25,7 +25,7 @@ const MarketingPage = async () => {
         </p>
       </div>
       <div className="flex items-center justify-center">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-4 gap-y-4">
           <FeatureCard
             icon={PhoneCall}
             label="Unlimited amount of phone calls!"
@@ -34,12 +34,12 @@ const MarketingPage = async () => {
             icon={MessageSquareText}
             label="Chat with your friends!"
           />
-          <FeatureCard icon={File} label="Transfer files to your collegues!" />
+          <FeatureCard icon={File} label="Transfer files to your colleagues!" />
         </div>
       </div>
-      <div className="text-sm md:text-xl text-neutral-400 dark:text-neutral-300  mt-4 max-w-md text-center mx-auto">
+      <div className="text-sm md:text-xl text-neutral-400 dark:text-neutral-300 mt-4 max-w-md text-center mx-auto">
         Manage friendships, make new friendships. Socialize with users or
-        communicate plans with collegues and family members!
+        communicate plans with colleagues and family members!
       </div>
       {!user && (
         <SignInButton>

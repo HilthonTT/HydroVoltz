@@ -20,12 +20,6 @@ export const Logo = ({ className }: LogoProps) => {
           )}>
           <Image src="./logo.svg" alt="Logo" className="object-cover" fill />
         </div>
-        <div className="hidden lg:block">
-          <p className="text-xl font-semibold">HydroVoltz</p>
-          <p className="text-muted-foreground text-xs">
-            Chat with your friends!
-          </p>
-        </div>
       </div>
     </Link>
   );
