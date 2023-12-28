@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { SignInButton, UserButton, currentUser } from "@clerk/nextjs";
 import { LogIn, MessageSquareText } from "lucide-react";
 
@@ -24,13 +25,15 @@ export const Actions = async () => {
       )}
       {!!user && (
         <div className="flex items-center justify-center gap-x-2">
-          <Button variant="ghost">
-            <Hint label="Talk with friends" asChild>
-              <div>
-                <MessageSquareText className="h-6 w-6" />
-                <span className="sr-only">Talk with friends</span>
-              </div>
-            </Hint>
+          <Button variant="ghost" asChild>
+            <Link href="/chat">
+              <Hint label="Talk with friends" asChild>
+                <div>
+                  <MessageSquareText className="h-6 w-6" />
+                  <span className="sr-only">Talk with friends</span>
+                </div>
+              </Hint>
+            </Link>
           </Button>
           <ModeToggle />
           <UserButton afterSignOutUrl="/" />
