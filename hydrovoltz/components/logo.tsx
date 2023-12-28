@@ -2,10 +2,20 @@
 
 import Image from "next/image";
 
-export const Logo = () => {
+import { cn } from "@/lib/utils";
+
+interface LogoProps {
+  className?: string;
+}
+
+export const Logo = ({ className }: LogoProps) => {
   return (
     <div className="relative flex flex-col items-center justify-center gap-x-4">
-      <div className="h-28 w-28 relative bg-black dark:bg-white rounded-full">
+      <div
+        className={cn(
+          "h-28 w-28 relative bg-white rounded-full border-2 border-gray-500 dark:border-0",
+          className
+        )}>
         <Image src="./logo.svg" alt="Logo" className="object-cover" fill />
       </div>
       <div className="hidden lg:block text-center">

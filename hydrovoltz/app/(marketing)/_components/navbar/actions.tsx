@@ -3,6 +3,7 @@ import { LogIn, MessageSquareText } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Hint } from "@/components/hint";
+import { ModeToggle } from "@/components/mode-toggle";
 
 export const Actions = async () => {
   const user = await currentUser();
@@ -31,6 +32,7 @@ export const Actions = async () => {
               </div>
             </Hint>
           </Button>
+          <ModeToggle />
           <UserButton afterSignOutUrl="/" />
         </div>
       )}
