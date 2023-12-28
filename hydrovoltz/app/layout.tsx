@@ -9,8 +9,17 @@ import { ThemeProvider } from "@/components/providers/theme-provider";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "HydroVoltz",
+  title: {
+    default: "HydroVoltz",
+    template: `%s | HydroVoltz`,
+  },
   description: "Chat with your friends or family!",
+  icons: [
+    {
+      url: "/logo.svg",
+      href: "/logo.svg",
+    },
+  ],
 };
 
 export default function RootLayout({
