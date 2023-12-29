@@ -2,7 +2,8 @@ import { redirectToSignIn } from "@clerk/nextjs";
 
 import { getSelf } from "@/lib/auth-service";
 
-import { UserSidebar } from "./_components/user-sidebar";
+import { Sidebar } from "./_components/sidebar/index";
+import { Container } from "./_components/container";
 
 const ChatPage = async () => {
   const self = await getSelf();
@@ -13,8 +14,8 @@ const ChatPage = async () => {
 
   return (
     <>
-      <UserSidebar self={self} />
-      <div className="pl-80">Chat Page</div>
+      <Sidebar self={self} />
+      <Container>Chat Page</Container>
     </>
   );
 };
