@@ -31,3 +31,30 @@ export const getFriends = async (): Promise<User[]> => {
 
   return friends;
 };
+
+export const getPendingFriendRequests = async () => {
+  const self = await getSelf();
+
+  const pendingRequests = await db.friendRequest.findMany({
+    where: {
+      AND: [
+        {
+          senderId: self.id,
+        },
+        {
+          status: "PENDING",
+        },
+      ],
+    },
+    include: {
+      receiver: true,
+      sender: true,
+    },
+  });
+
+  const requestedUsers = pendingRequests.map((request) => {
+    return request.receiver;
+  });
+
+  return requestedUsers;
+};

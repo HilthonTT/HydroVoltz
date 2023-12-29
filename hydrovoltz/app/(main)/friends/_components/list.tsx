@@ -5,6 +5,7 @@ import { useSearchParams } from "next/navigation";
 import { useIsClient } from "usehooks-ts";
 
 import { Separator } from "@/components/ui/separator";
+import { UserCard } from "./user-card";
 
 interface ListProps {
   users: User[];
@@ -39,6 +40,9 @@ export const List = ({ users }: ListProps) => {
     <div className="p-1">
       <h2 className="font-semibold text-xl lg:text-2xl">{title}</h2>
       <Separator className="my-4" />
+      {users?.map((user) => (
+        <UserCard key={user.id} user={user} />
+      ))}
     </div>
   );
 };

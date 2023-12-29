@@ -20,10 +20,17 @@ const handler = async (data: InputType): Promise<ReturnType> => {
 
   const { username } = data;
 
+  const loweredUsername = username.toLowerCase();
+  if (self.username === loweredUsername) {
+    return {
+      error: "Cannot send a friend request to yourself",
+    };
+  }
+
   try {
     const user = await db.user.findUnique({
       where: {
-        username,
+        username: loweredUsername,
       },
     });
 
