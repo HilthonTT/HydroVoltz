@@ -1,6 +1,6 @@
 "use client";
 
-import { MessageSquareText, Pencil, PhoneCall } from "lucide-react";
+import { MessageSquareText, Pencil, PhoneCall, Users } from "lucide-react";
 
 import { Route } from "./route";
 
@@ -10,6 +10,11 @@ export const RoutesTops = () => {
       icon: MessageSquareText,
       href: "/chat",
       label: "Chat",
+    },
+    {
+      icon: Users,
+      href: "/friends",
+      label: "Friends",
     },
     {
       icon: PhoneCall,

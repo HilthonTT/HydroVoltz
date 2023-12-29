@@ -1,6 +1,6 @@
 "use client";
 
-import { useRouter } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import { User } from "@prisma/client";
 import { MoreVertical } from "lucide-react";
 
@@ -17,11 +17,16 @@ interface UserCardProps {
 
 export const UserCard = ({ user }: UserCardProps) => {
   const router = useRouter();
+  const params = useParams();
+
   const { collapsed } = useChatSidebar((state) => state);
 
   const onClick = () => {
-    router.push(`/chat/${user.id}`);
+    router.push(`/chat/${user.username}`);
   };
+
+  const { username } = params;
+  const isCurrentUser = username === user.username;
 
   const status =
     (user?.status?.length as number) > 0
@@ -32,7 +37,10 @@ export const UserCard = ({ user }: UserCardProps) => {
     <div
       role="button"
       onClick={onClick}
-      className="group rounded-md bg-transparent hover:bg-secondary transition mx-2 p-2">
+      className={cn(
+        "group rounded-md bg-transparent hover:bg-secondary dark:hover:bg-secondary/80 transition mx-2 p-2",
+        isCurrentUser ? "bg-secondary" : "bg-transparent"
+      )}>
       <div className="flex items-center justify-between">
         <div className="flex items-center justify-center">
           <Hint label={user.username} show={collapsed}>
