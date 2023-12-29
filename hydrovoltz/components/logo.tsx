@@ -6,9 +6,10 @@ import { cn } from "@/lib/utils";
 
 interface LogoProps {
   className?: string;
+  showSlogan?: boolean;
 }
 
-export const Logo = ({ className }: LogoProps) => {
+export const Logo = ({ className, showSlogan = true }: LogoProps) => {
   return (
     <div className="relative flex flex-col items-center justify-center gap-x-4">
       <div
@@ -20,7 +21,11 @@ export const Logo = ({ className }: LogoProps) => {
       </div>
       <div className="hidden lg:block text-center">
         <p className="text-2xl font-semibold">HydroVoltz</p>
-        <p className="text-muted-foreground text-sm">Chat with your friends!</p>
+        {showSlogan && (
+          <p className="text-muted-foreground text-sm">
+            Chat with your friends!
+          </p>
+        )}
       </div>
     </div>
   );

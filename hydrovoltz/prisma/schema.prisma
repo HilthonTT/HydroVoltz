@@ -9,13 +9,40 @@ datasource db {
 }
   
 model User {
-  id              String @id @default(uuid())
-  externalUserId  String @unique
+  id              String    @id @default(uuid())
+  externalUserId  String    @unique
 
-  username        String @unique
-  imageUrl        String @db.Text
-  status          String? @db.Text
+  username        String    @unique
+  imageUrl        String    @db.Text
+  status          String?   @db.Text
 
-  createdAt       DateTime @default(now())
-  updatedAt       DateTime @updatedAt
+  sentRequests    FriendRequest[] @relation("sentRequest")
+  receivedRequest FriendRequest[] @relation("receivedRequest")
+
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+}
+
+enum Status {
+  PENDING
+  ACCEPTED
+  DECLINED
+}
+
+model FriendRequest {
+  id          String   @id @default(uuid())
+
+  status      Status   @default(PENDING)
+
+  receiverId  String
+  senderId    String
+
+  receiver    User     @relation("sentRequest", fields: [receiverId], references: [id], onDelete: Cascade)
+  sender      User     @relation("receivedRequest", fields: [senderId], references: [id], onDelete: Cascade)
+
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([receiverId])
+  @@index([senderId])
 }

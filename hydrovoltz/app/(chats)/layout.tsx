@@ -7,7 +7,7 @@ const ChatLayout = ({ children }: { children: React.ReactNode }) => {
       <Navbar />
       <main className="pt-20 w-full h-full">
         <Sidebar />
-        <div className="pl-20">{children}</div>
+        <div className="pl-20 h-full w-full">{children}</div>
       </main>
     </>
   );
