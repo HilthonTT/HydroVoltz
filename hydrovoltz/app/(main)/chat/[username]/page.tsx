@@ -1,4 +1,5 @@
 import { getSelf } from "@/lib/auth-service";
+import { getFriendsUser } from "@/lib/friend-service";
 
 import { Sidebar } from "../_components/sidebar";
 import { Container } from "../_components/container";
@@ -13,10 +14,11 @@ interface UsernamePageProps {
 
 const UsernamePage = async ({ params }: UsernamePageProps) => {
   const self = await getSelf();
+  const friends = await getFriendsUser(self.id);
 
   return (
     <>
-      <Sidebar self={self} />
+      <Sidebar self={self} friends={friends} />
       <Container>
         <div className="flex flex-col h-full">
           <ChatHeader />

@@ -21,6 +21,41 @@ export const getFriends = async () => {
   return friends;
 };
 
+export const getFriendsUser = async (selfId?: string) => {
+  let self: string;
+
+  if (selfId) {
+    self = selfId;
+  } else {
+    const mySelf = await getSelf();
+    self = mySelf.id;
+  }
+
+  if (!self) {
+    throw new Error("Not authorized");
+  }
+
+  const friends = await db.friend.findMany({
+    where: {
+      OR: [{ initiatorId: self }, { friendId: self }],
+    },
+    include: {
+      initiator: true,
+      friend: true,
+    },
+  });
+
+  const users = friends.map((friend) => {
+    if (friend.friend.id === self) {
+      return friend.initiator;
+    }
+
+    return friend.friend;
+  });
+
+  return users;
+};
+
 export const getPendingFriendRequests = async () => {
   const self = await getSelf();
 

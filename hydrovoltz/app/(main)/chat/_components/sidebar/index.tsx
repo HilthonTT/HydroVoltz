@@ -15,9 +15,10 @@ import { Toggle } from "./toggle";
 
 interface UserSidebarProps {
   self: User;
+  friends: User[];
 }
 
-export const Sidebar = ({ self }: UserSidebarProps) => {
+export const Sidebar = ({ self, friends }: UserSidebarProps) => {
   const isClient = useIsClient();
   const { collapsed } = useChatSidebar((state) => state);
 
@@ -34,7 +35,11 @@ export const Sidebar = ({ self }: UserSidebarProps) => {
         <div className="px-4">
           <UserCard user={self} />
         </div>
-        <ScrollArea className="h-[680px] w-full p-4"></ScrollArea>
+        <ScrollArea className="h-[680px] w-full p-4">
+          {friends?.map((friend) => (
+            <UserCard key={friend.id} user={friend} />
+          ))}
+        </ScrollArea>
       </div>
     </WidgetWrapper>
   );

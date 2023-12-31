@@ -2,6 +2,7 @@ import { Lock } from "lucide-react";
 import { redirectToSignIn } from "@clerk/nextjs";
 
 import { getSelf } from "@/lib/auth-service";
+import { getFriendsUser } from "@/lib/friend-service";
 import { Logo } from "@/components/logo";
 import { Badge } from "@/components/ui/badge";
 
@@ -16,6 +17,7 @@ export function generateMetadata() {
 
 const ChatPage = async () => {
   const self = await getSelf();
+  const friends = await getFriendsUser(self.id);
 
   if (!self) {
     return redirectToSignIn();
@@ -23,7 +25,7 @@ const ChatPage = async () => {
 
   return (
     <>
-      <Sidebar self={self} />
+      <Sidebar self={self} friends={friends} />
       <Container>
         <div className="flex flex-col items-center justify-center h-full my-auto w-full">
           <Logo showSlogan={false} />
