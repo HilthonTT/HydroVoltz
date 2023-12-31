@@ -1,16 +1,14 @@
-import { User } from "@prisma/client";
-
 import { db } from "@/lib/db";
 import { getSelf } from "@/lib/auth-service";
 
-export const getFriends = async (): Promise<User[]> => {
+export const getFriends = async () => {
   const self = await getSelf();
 
   if (!self) {
     throw new Error("Not authorized");
   }
 
-  const friendships = await db.friend.findMany({
+  const friends = await db.friend.findMany({
     where: {
       OR: [{ initiatorId: self.id }, { friendId: self.id }],
     },
@@ -18,15 +16,6 @@ export const getFriends = async (): Promise<User[]> => {
       initiator: true,
       friend: true,
     },
-  });
-
-  // Extract users from the friendships
-  const friends = friendships.map((friendship) => {
-    if (friendship.initiator.id === self.id) {
-      return friendship.friend;
-    }
-
-    return friendship.initiator;
   });
 
   return friends;
@@ -39,7 +28,7 @@ export const getPendingFriendRequests = async () => {
     where: {
       AND: [
         {
-          senderId: self.id,
+          receiverId: self.id,
         },
         {
           status: "PENDING",
@@ -52,9 +41,5 @@ export const getPendingFriendRequests = async () => {
     },
   });
 
-  const requestedUsers = pendingRequests.map((request) => {
-    return request.receiver;
-  });
-
-  return requestedUsers;
+  return pendingRequests;
 };

@@ -1,43 +1,17 @@
-import { redirectToSignIn } from "@clerk/nextjs";
-import { User } from "@prisma/client";
-
+import { getFriends } from "@/lib/friend-service";
 import { getSelf } from "@/lib/auth-service";
-import { getFriends, getPendingFriendRequests } from "@/lib/friend-service";
 
-import { Header } from "./_components/header";
 import { List } from "./_components/list";
+import { Container } from "./_components/container";
 
-interface FriendsPageProps {
-  searchParams: {
-    type: string | null;
-  };
-}
-
-const FriendsPage = async ({ searchParams }: FriendsPageProps) => {
+const FriendsPage = async () => {
   const self = await getSelf();
-
-  if (!self) {
-    return redirectToSignIn();
-  }
-
-  let users: User[] = [];
-
-  switch (searchParams?.type) {
-    case "pending":
-      users = await getPendingFriendRequests();
-      break;
-    case "blocked":
-      break;
-    default:
-      users = await getFriends();
-      break;
-  }
+  const friends = await getFriends();
 
   return (
-    <div className="w-full h-full p-8 space-y-4">
-      <Header />
-      <List users={users} />
-    </div>
+    <Container label="All friends">
+      <List friends={friends} self={self} />
+    </Container>
   );
 };
 

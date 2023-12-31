@@ -1,36 +1,23 @@
 "use client";
 
-import { User } from "@prisma/client";
-import { useSearchParams } from "next/navigation";
+import { Friend, User } from "@prisma/client";
 import { useIsClient } from "usehooks-ts";
 
 import { Separator } from "@/components/ui/separator";
-import { UserCard } from "./user-card";
+import { Skeleton } from "@/components/ui/skeleton";
+
+import { FriendCard } from "./friend-card";
 
 interface ListProps {
-  users: User[];
+  friends: (Friend & {
+    friend: User;
+    initiator: User;
+  })[];
+  self: User;
 }
 
-export const List = ({ users }: ListProps) => {
+export const List = ({ friends, self }: ListProps) => {
   const isClient = useIsClient();
-  const params = useSearchParams();
-
-  const type = params.get("type");
-  let title;
-
-  const userLength = users?.length || 0;
-
-  switch (type) {
-    case "blocked":
-      title = `Blocked users - ${userLength}`;
-      break;
-    case "pending":
-      title = `Pending friend requests - ${userLength}`;
-      break;
-    default:
-      title = `All friends - ${userLength}`;
-      break;
-  }
 
   if (!isClient) {
     return <ListSkeleton />;
@@ -38,15 +25,29 @@ export const List = ({ users }: ListProps) => {
 
   return (
     <div className="p-1">
-      <h2 className="font-semibold text-xl lg:text-2xl">{title}</h2>
+      <h2 className="font-semibold text-xl lg:text-2xl">
+        All friends - {friends?.length || 0}
+      </h2>
       <Separator className="my-4" />
-      {users?.map((user) => (
-        <UserCard key={user.id} user={user} />
-      ))}
+      <div className="space-y-4">
+        {friends?.map((friend) => (
+          <FriendCard key={friend.id} friend={friend} self={self} />
+        ))}
+      </div>
     </div>
   );
 };
 
 export const ListSkeleton = () => {
-  return <div>Skeleton</div>;
+  return (
+    <>
+      <Skeleton className="h-8 w-[170px]" />
+      <Separator className="my-4" />
+      <div className="space-y-4">
+        {[...Array(4)].map((_, i) => (
+          <Skeleton key={i} className="h-12 w-full" />
+        ))}
+      </div>
+    </>
+  );
 };
