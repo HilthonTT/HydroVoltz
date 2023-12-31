@@ -1,23 +1,22 @@
 "use client";
 
-import { ElementRef, useEffect, useRef } from "react";
-import { User } from "@prisma/client";
+import { DirectMesssage, User } from "@prisma/client";
+
+import { ChatMessage } from "./chat-message";
 
 interface ChatMessagesProps {
   user: User;
-  messages: any[];
+  messages: (DirectMesssage & {
+    user: User;
+  })[];
 }
 
 export const ChatMessages = ({ user, messages }: ChatMessagesProps) => {
-  const scrollRef = useRef<ElementRef<"div">>(null);
-
-  useEffect(() => {
-    scrollRef?.current?.scrollIntoView({ behavior: "smooth" });
-  }, [messages.length]);
-
   return (
-    <div className="flex-1 overflow-y-auto pr-4">
-      <div ref={scrollRef} />
+    <div className="overflow-y-auto px-5 h-[85%]">
+      {messages?.map((message) => (
+        <ChatMessage key={message.id} message={message} user={user} />
+      ))}
     </div>
   );
 };

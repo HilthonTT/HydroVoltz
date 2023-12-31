@@ -16,7 +16,7 @@ export const SocketIndicator = () => {
 
   return (
     <Badge variant="outline" className="bg-emerald-600 text-white border-none">
-      Live: Real time updates
+      <span className="text-xs lg:text-base">Live: Real time updates</span>
     </Badge>
   );
 };

@@ -32,7 +32,6 @@ export const ChatHeader = ({ user }: ChatHeaderProps) => {
           </p>
         </div>
       </div>
-      <SocketIndicator />
     </div>
   );
 };
