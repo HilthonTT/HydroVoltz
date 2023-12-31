@@ -16,6 +16,7 @@ import {
 } from "@/components/ui/dialog";
 import { useAction } from "@/hooks/use-action";
 import { deleteFriend } from "@/actions/delete-friend";
+import { Hint } from "@/components/hint";
 
 interface DeleteFriendButtonProps {
   id: string;
@@ -49,8 +50,13 @@ export const DeleteFriendButton = ({ id, self }: DeleteFriendButtonProps) => {
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <Button variant="ghost" className="h-auto w-auto">
-          <X className="h-5 w-5" />
+        <Button variant="ghost" className="h-auto w-auto" disabled={isLoading}>
+          <Hint label="Remove Friend" asChild>
+            <div>
+              <X className="h-5 w-5" />
+              <span className="sr-only">Remove Friend</span>
+            </div>
+          </Hint>
         </Button>
       </DialogTrigger>
       <DialogContent>

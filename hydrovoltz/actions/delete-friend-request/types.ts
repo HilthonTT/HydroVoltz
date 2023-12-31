@@ -6,4 +6,4 @@ import { ActionState } from "@/lib/create-safe-action";
 import { DeleteFriendRequest } from "./schema";
 
 export type InputType = z.infer<typeof DeleteFriendRequest>;
-export type ReturnType = ActionState<InputType, FriendRequest[]>;
+export type ReturnType = ActionState<InputType, FriendRequest>;

@@ -5,6 +5,7 @@ import { useIsClient } from "usehooks-ts";
 
 import { Separator } from "@/components/ui/separator";
 import { Skeleton } from "@/components/ui/skeleton";
+import { EmptyList } from "@/components/list-empty";
 
 import { FriendCard } from "./friend-card";
 
@@ -30,6 +31,9 @@ export const List = ({ friends, self }: ListProps) => {
       </h2>
       <Separator className="my-4" />
       <div className="space-y-4">
+        {friends?.length === 0 && (
+          <EmptyList label="You do not have any friends. He's a dead corpse for you." />
+        )}
         {friends?.map((friend) => (
           <FriendCard key={friend.id} friend={friend} self={self} />
         ))}

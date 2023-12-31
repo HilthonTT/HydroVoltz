@@ -43,3 +43,26 @@ export const getPendingFriendRequests = async () => {
 
   return pendingRequests;
 };
+
+export const getAddedUsers = async () => {
+  const self = await getSelf();
+
+  const nonAcceptedFriendRequests = await db.friendRequest.findMany({
+    where: {
+      AND: [
+        {
+          senderId: self.id,
+        },
+        {
+          status: "PENDING",
+        },
+      ],
+    },
+    include: {
+      receiver: true,
+      sender: true,
+    },
+  });
+
+  return nonAcceptedFriendRequests;
+};

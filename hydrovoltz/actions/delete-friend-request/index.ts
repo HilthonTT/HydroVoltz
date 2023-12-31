@@ -1,7 +1,6 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
-import { redirect } from "next/navigation";
 
 import { getSelf } from "@/lib/auth-service";
 import { createSafeAction } from "@/lib/create-safe-action";
@@ -19,16 +18,14 @@ const handler = async (data: InputType): Promise<ReturnType> => {
     };
   }
 
-  const { userId } = data;
+  const { id } = data;
 
-  let friendRequests;
+  let friendRequest;
 
   try {
-    friendRequests = await db.friendRequest.deleteMany({
+    friendRequest = await db.friendRequest.delete({
       where: {
-        senderId: self.id,
-        receiverId: userId,
-        status: "PENDING",
+        id,
       },
     });
   } catch (error) {
@@ -37,8 +34,9 @@ const handler = async (data: InputType): Promise<ReturnType> => {
     };
   }
 
-  revalidatePath("/friends");
-  redirect("/friends?type=pending");
+  revalidatePath("/friends/added");
+
+  return { data: friendRequest };
 };
 
 export const deleteFriendRequest = createSafeAction(

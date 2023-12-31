@@ -16,23 +16,29 @@ interface RequestCardProps {
 }
 
 export const RequestCard = ({ request }: RequestCardProps) => {
-  const { execute: executeAccept } = useAction(acceptFriendRequest, {
-    onSuccess: () => {
-      toast.success("Friend request accept!");
-    },
-    onError: (error) => {
-      toast.error(error);
-    },
-  });
+  const { execute: executeAccept, isLoading: isAcceptLoading } = useAction(
+    acceptFriendRequest,
+    {
+      onSuccess: () => {
+        toast.success("Friend request accept!");
+      },
+      onError: (error) => {
+        toast.error(error);
+      },
+    }
+  );
 
-  const { execute: executeDecline } = useAction(declineFriendRequest, {
-    onSuccess: () => {
-      toast.success("Friend request declined!");
-    },
-    onError: (error) => {
-      toast.error(error);
-    },
-  });
+  const { execute: executeDecline, isLoading: isDeclineLoading } = useAction(
+    declineFriendRequest,
+    {
+      onSuccess: () => {
+        toast.success("Friend request declined!");
+      },
+      onError: (error) => {
+        toast.error(error);
+      },
+    }
+  );
 
   const onAccept = () => {
     executeAccept({ id: request.id });
@@ -41,6 +47,8 @@ export const RequestCard = ({ request }: RequestCardProps) => {
   const onDecline = () => {
     executeDecline({ id: request.id });
   };
+
+  const isLoading = isDeclineLoading || isAcceptLoading;
 
   return (
     <div className="bg-secondary rounded-lg p-4 flex items-center justify-between">
@@ -61,13 +69,21 @@ export const RequestCard = ({ request }: RequestCardProps) => {
       </div>
       <div className="space-x-2">
         <Hint label="Accept" asChild>
-          <Button onClick={onAccept} variant="ghost" className="h-auto w-auto">
+          <Button
+            onClick={onAccept}
+            variant="ghost"
+            className="h-auto w-auto"
+            disabled={isLoading}>
             <Verified className="h-5 w-5" />
             <span className="sr-only">Accept</span>
           </Button>
         </Hint>
         <Hint label="Decline" asChild>
-          <Button onClick={onDecline} variant="ghost" className="h-auto w-auto">
+          <Button
+            onClick={onDecline}
+            variant="ghost"
+            className="h-auto w-auto"
+            disabled={isLoading}>
             <X className="h-5 w-5" />
             <span className="sr-only">Decline</span>
           </Button>

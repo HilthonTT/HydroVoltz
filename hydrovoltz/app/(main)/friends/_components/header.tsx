@@ -28,6 +28,9 @@ export const Header = ({ label }: HeaderProps) => {
               <Link href="/friends/pending">Pending</Link>
             </Button>
             <Button className="h-auto w-auto" variant="ghost" asChild>
+              <Link href="/friends/added">Added</Link>
+            </Button>
+            <Button className="h-auto w-auto" variant="ghost" asChild>
               <Link href="/friends/blocked">Blocked</Link>
             </Button>
             <AddFriendButton />
