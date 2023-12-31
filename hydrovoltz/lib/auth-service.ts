@@ -1,6 +1,8 @@
 import { currentUser } from "@clerk/nextjs";
+import { getAuth } from "@clerk/nextjs/server";
 
 import { db } from "@/lib/db";
+import { NextApiRequest } from "next";
 
 export const getSelf = async () => {
   const self = await currentUser();
@@ -18,6 +20,22 @@ export const getSelf = async () => {
   if (!user) {
     throw new Error("Not found");
   }
+
+  return user;
+};
+
+export const getSelfPages = async (req: NextApiRequest) => {
+  const { userId } = getAuth(req);
+
+  if (!userId) {
+    return null;
+  }
+
+  const user = await db.user.findUnique({
+    where: {
+      externalUserId: userId,
+    },
+  });
 
   return user;
 };

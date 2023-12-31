@@ -3,6 +3,7 @@
 import { useParams, useRouter } from "next/navigation";
 import { User } from "@prisma/client";
 import { MoreVertical } from "lucide-react";
+import { useUser } from "@clerk/nextjs";
 
 import { UserAvatar } from "@/components/user-avatar";
 import { Button } from "@/components/ui/button";
@@ -16,6 +17,7 @@ interface UserCardProps {
 }
 
 export const UserCard = ({ user }: UserCardProps) => {
+  const { user: self } = useUser();
   const router = useRouter();
   const params = useParams();
 
@@ -51,7 +53,9 @@ export const UserCard = ({ user }: UserCardProps) => {
             />
           </Hint>
           <div className={cn("text-sm ml-2", collapsed && "hidden")}>
-            <p className="capitalize font-semibold">{user.username}</p>
+            <p className="capitalize font-semibold">
+              {user.username} {self?.id === user?.externalUserId && "(You)"}
+            </p>
             <p
               title={status || ""}
               className="text-xs text-muted-foreground overflow-hidden overflow-ellipsis whitespace-nowrap max-w-[200px]">

@@ -1,6 +1,31 @@
 import { db } from "@/lib/db";
 import { getSelf } from "@/lib/auth-service";
 
+export const isFriends = async (userId: string) => {
+  const self = await getSelf();
+
+  const friends = await db.friend.findFirst({
+    where: {
+      AND: [
+        {
+          OR: [
+            {
+              initiatorId: self.id,
+              friendId: userId,
+            },
+            {
+              initiatorId: userId,
+              friendId: self.id,
+            },
+          ],
+        },
+      ],
+    },
+  });
+
+  return !!friends;
+};
+
 export const getFriends = async () => {
   const self = await getSelf();
 
