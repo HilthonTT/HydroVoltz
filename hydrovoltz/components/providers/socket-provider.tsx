@@ -3,10 +3,10 @@
 import { createContext, useContext, useEffect, useState } from "react";
 import { io as ClientIO } from "socket.io-client";
 
-interface SocketContextType {
+type SocketContextType = {
   socket: any | null;
   isConnected: boolean;
-}
+};
 
 const SocketContext = createContext<SocketContextType>({
   socket: null,
@@ -45,7 +45,7 @@ export const SocketProvider = ({ children }: SocketProviderProps) => {
     setSocket(socketInstance);
 
     return () => {
-      socketInstance?.disconnect();
+      socketInstance.disconnect();
     };
   }, []);
 
