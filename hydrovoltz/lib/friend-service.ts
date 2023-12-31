@@ -46,7 +46,7 @@ export const getFriends = async () => {
   return friends;
 };
 
-export const getFriendsUser = async (selfId?: string) => {
+export const getFriendsUser = async (selfId?: string, username?: string) => {
   let self: string;
 
   if (selfId) {
@@ -62,7 +62,14 @@ export const getFriendsUser = async (selfId?: string) => {
 
   const friends = await db.friend.findMany({
     where: {
-      OR: [{ initiatorId: self }, { friendId: self }],
+      OR: [
+        {
+          initiatorId: self,
+        },
+        {
+          friendId: self,
+        },
+      ],
     },
     include: {
       initiator: true,
@@ -70,12 +77,17 @@ export const getFriendsUser = async (selfId?: string) => {
     },
   });
 
-  const users = friends.map((friend) => {
-    if (friend.friend.id === self) {
-      return friend.initiator;
+  const users = friends.flatMap((friend) => {
+    const user = friend.friend.id === self ? friend.initiator : friend.friend;
+
+    if (
+      !username ||
+      (username && user.username.toLowerCase().includes(username.toLowerCase()))
+    ) {
+      return [user];
     }
 
-    return friend.friend;
+    return [];
   });
 
   return users;

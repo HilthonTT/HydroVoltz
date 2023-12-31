@@ -3,7 +3,7 @@
 import qs from "query-string";
 import { ElementRef, useRef, useState } from "react";
 import { SearchIcon, X } from "lucide-react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 
 import {
   Dialog,
@@ -22,7 +22,8 @@ export const Search = () => {
   const closeRef = useRef<ElementRef<"button">>(null);
 
   const router = useRouter();
-  const [value, setValue] = useState("");
+  const searchParams = useSearchParams();
+  const [value, setValue] = useState(searchParams?.get("username") || "");
 
   const { collapsed } = useChatSidebar((state) => state);
 
@@ -32,10 +33,6 @@ export const Search = () => {
 
   const onSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-
-    if (!value) {
-      return;
-    }
 
     const url = qs.stringifyUrl(
       {

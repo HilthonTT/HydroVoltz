@@ -15,9 +15,15 @@ export function generateMetadata() {
   };
 }
 
-const ChatPage = async () => {
+interface ChatPageProps {
+  searchParams: {
+    username: string;
+  };
+}
+
+const ChatPage = async ({ searchParams }: ChatPageProps) => {
   const self = await getSelf();
-  const friends = await getFriendsUser(self.id);
+  const friends = await getFriendsUser(self.id, searchParams.username);
 
   if (!self) {
     return redirectToSignIn();
