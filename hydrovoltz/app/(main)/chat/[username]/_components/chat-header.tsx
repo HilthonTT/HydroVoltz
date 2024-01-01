@@ -3,20 +3,22 @@
 import { User } from "@prisma/client";
 
 import { UserAvatar } from "@/components/user-avatar";
-import { SocketIndicator } from "@/components/socket-indication";
+import { useUserModal } from "@/store/use-user-modal";
 
 interface ChatHeaderProps {
   user: User;
 }
 
 export const ChatHeader = ({ user }: ChatHeaderProps) => {
+  const { onOpen } = useUserModal((state) => state);
+
   const status =
     (user?.status?.length as number) > 0
       ? user?.status
       : "This user has no status.";
 
   const onClick = () => {
-    // TODO: Open Dialog for user data
+    onOpen(user);
   };
 
   return (

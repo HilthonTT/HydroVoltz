@@ -11,6 +11,7 @@ import { Hint } from "@/components/hint";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useChatSidebar } from "@/store/use-chat-sidebar";
 import { cn } from "@/lib/utils";
+import { UserCardOptions } from "./user-card-options";
 
 interface UserCardProps {
   user: User;
@@ -27,7 +28,7 @@ export const UserCard = ({ user }: UserCardProps) => {
     router.push(`/chat/${user.username}`);
   };
 
-  const { username } = params;
+  const { username } = params!;
   const isCurrentUser = username === user.username;
 
   const status =
@@ -68,11 +69,7 @@ export const UserCard = ({ user }: UserCardProps) => {
             "opacity-0 group-hover:opacity-100 transition",
             collapsed && "hidden"
           )}>
-          <Hint label="Options" side="right">
-            <Button className="h-auto w-auto" variant="ghost">
-              <MoreVertical className="h-4 w-4" />
-            </Button>
-          </Hint>
+          <UserCardOptions user={user} />
         </div>
       </div>
     </div>

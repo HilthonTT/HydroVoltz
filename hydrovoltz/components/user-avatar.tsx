@@ -20,11 +20,17 @@ const avatarSizes = cva("", {
 interface UserAvatarProps extends VariantProps<typeof avatarSizes> {
   username: string;
   imageUrl: string;
+  className?: string;
 }
 
-export const UserAvatar = ({ username, imageUrl, size }: UserAvatarProps) => {
+export const UserAvatar = ({
+  username,
+  imageUrl,
+  size,
+  className,
+}: UserAvatarProps) => {
   return (
-    <div className="relative">
+    <div className={cn("relative", className)}>
       <Avatar className={cn(avatarSizes({ size }))}>
         <AvatarImage src={imageUrl} className="object-cover" />
         <AvatarFallback>
