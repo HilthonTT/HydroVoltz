@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { DirectMesssage, User } from "@prisma/client";
+import { DirectMessage, User } from "@prisma/client";
 import { toast } from "sonner";
 import { Copy, CopyCheck } from "lucide-react";
 
@@ -10,7 +10,7 @@ import { UserAvatar } from "@/components/user-avatar";
 import { Button } from "@/components/ui/button";
 
 interface ChatMessageProps {
-  message: DirectMesssage & { user: User };
+  message: DirectMessage & { user: User };
   user: User;
 }
 

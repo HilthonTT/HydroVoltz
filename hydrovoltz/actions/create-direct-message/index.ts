@@ -1,11 +1,13 @@
 "use server";
 
 import { getSelf } from "@/lib/auth-service";
+import { pusherServer } from "@/lib/pusher";
 import { createSafeAction } from "@/lib/create-safe-action";
 import { db } from "@/lib/db";
 
 import { InputType, ReturnType } from "./types";
 import { CreateDirectMessage } from "./schema";
+import { toPusherKey } from "@/lib/utils";
 
 const handler = async (data: InputType): Promise<ReturnType> => {
   const self = await getSelf();
@@ -20,7 +22,23 @@ const handler = async (data: InputType): Promise<ReturnType> => {
 
   let directMessage;
   try {
-    directMessage = await db.directMesssage.create({
+    directMessage = {
+      content,
+      fileUrl,
+      conversationId,
+      user: self,
+      createdAt: Date.now(),
+      updatedAt: Date.now(),
+      deleted: false,
+    };
+
+    await pusherServer.trigger(
+      toPusherKey(`chat:${conversationId}`),
+      "incoming-messages",
+      directMessage
+    );
+
+    directMessage = await db.directMessage.create({
       data: {
         content,
         fileUrl,

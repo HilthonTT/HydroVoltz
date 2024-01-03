@@ -23,7 +23,7 @@ model User {
   friendshipsInitiated  Friend[] @relation("initiator")
   friendshipsReceived   Friend[] @relation("initiatedFriend")
 
-  directMessages        DirectMesssage[]
+  directMessages        DirectMessage[]
 
   conversationInitied   Conversation[] @relation("userOne")
   conversationReceived  Conversation[] @relation("userTwo")
@@ -75,7 +75,7 @@ model Friend {
   @@unique([initiatorId, friendId])
 }
 
-model DirectMesssage {
+model DirectMessage {
   id              String @id @default(uuid())
   content         String @db.Text
   fileUrl         String? @db.Text
@@ -104,7 +104,7 @@ model Conversation {
   userTwoId       String
   userTwo         User @relation("userTwo", fields: [userTwoId], references: [id], onDelete: Cascade)
 
-  directMessages  DirectMesssage[]
+  directMessages  DirectMessage[]
 
   @@index([userOneId])
   @@index([userTwoId])

@@ -32,10 +32,7 @@ export const ChatInput = ({ user, conversationId }: ChatInputProps) => {
     }
 
     execute({ content, conversationId });
-
-    if (textareaRef.current) {
-      textareaRef.current.value = "";
-    }
+    setContent("");
   };
 
   const onKeyDown = (e: KeyboardEvent<HTMLTextAreaElement>) => {
@@ -66,7 +63,8 @@ export const ChatInput = ({ user, conversationId }: ChatInputProps) => {
             disabled={isLoading}
             variant="ghost"
             className="w-auto h-auto"
-            type="submit">
+            type="submit"
+            onClick={onSubmit}>
             {isLoading && <Loader2 className="animate-spin h-4 w-4" />}
             {!isLoading && (
               <div className="p-0">
