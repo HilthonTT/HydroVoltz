@@ -9,4 +9,7 @@ export const CreateDirectMessage = z.object({
   conversationId: z.string({
     required_error: "Conversation ID is required",
   }),
+  userId: z.string({
+    required_error: "User ID is required",
+  }),
 });

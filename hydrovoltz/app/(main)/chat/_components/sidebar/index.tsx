@@ -33,11 +33,11 @@ export const Sidebar = ({ self, friends }: UserSidebarProps) => {
       <Separator />
       <div className="mt-5">
         <div className="px-4">
-          <UserCard user={self} />
+          <UserCard user={self} self={self} />
         </div>
         <ScrollArea className="h-[680px] w-full p-4">
           {friends?.map((friend) => (
-            <UserCard key={friend.id} user={friend} />
+            <UserCard key={friend.id} user={friend} self={self} />
           ))}
         </ScrollArea>
       </div>

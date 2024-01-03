@@ -31,7 +31,7 @@ export const ChatInput = ({ user, conversationId }: ChatInputProps) => {
       return;
     }
 
-    execute({ content, conversationId });
+    execute({ content, conversationId, userId: user.id });
     setContent("");
   };
 

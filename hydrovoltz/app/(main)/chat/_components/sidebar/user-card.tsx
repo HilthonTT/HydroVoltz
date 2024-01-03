@@ -1,77 +1,130 @@
 "use client";
 
-import { useParams, useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
+import { toast } from "sonner";
+import { useParams, usePathname, useRouter } from "next/navigation";
 import { User } from "@prisma/client";
-import { MoreVertical } from "lucide-react";
-import { useUser } from "@clerk/nextjs";
 
+import { Badge } from "@/components/ui/badge";
 import { UserAvatar } from "@/components/user-avatar";
-import { Button } from "@/components/ui/button";
 import { Hint } from "@/components/hint";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useChatSidebar } from "@/store/use-chat-sidebar";
-import { cn } from "@/lib/utils";
+import { cn, toPusherKey } from "@/lib/utils";
+import { pusherClient } from "@/lib/pusher";
+import { ExtendedMessage } from "@/types";
+
 import { UserCardOptions } from "./user-card-options";
 
 interface UserCardProps {
   user: User;
+  self: User;
 }
 
-export const UserCard = ({ user }: UserCardProps) => {
-  const { user: self } = useUser();
-  const router = useRouter();
+export const UserCard = ({ user: otherUser, self }: UserCardProps) => {
   const params = useParams();
+  const router = useRouter();
+  const pathname = usePathname();
 
   const { collapsed } = useChatSidebar((state) => state);
 
-  const onClick = () => {
-    router.push(`/chat/${user.username}`);
-  };
+  const [unseenMessages, setUnseenMessages] = useState<ExtendedMessage[]>([]);
 
   const { username } = params!;
-  const isCurrentUser = username === user.username;
+  const isCurrentUser = username === otherUser.username;
 
   const status =
-    (user?.status?.length as number) > 0
-      ? user?.status
+    (otherUser?.status?.length as number) > 0
+      ? otherUser?.status
       : "This user has no status.";
+
+  const unseenMessagesCount = unseenMessages.filter((unseenMessage) => {
+    return unseenMessage.senderId === otherUser.id;
+  }).length;
+
+  useEffect(() => {
+    pusherClient.subscribe(toPusherKey(`user:${self.id}:chats`));
+    pusherClient.subscribe(toPusherKey(`user:${self.id}:friends`));
+
+    const chatHandler = (message: ExtendedMessage) => {
+      const shouldNotify = pathname !== `/chat/${message.senderName}`;
+
+      if (!shouldNotify) {
+        return;
+      }
+
+      toast.info(`${message.senderName} has sent you a message!`);
+      setUnseenMessages((prev) => [...prev, message]);
+    };
+
+    const newFriendHandler = () => {
+      router.refresh();
+    };
+
+    pusherClient.bind("new_message", chatHandler);
+    pusherClient.bind("new_friend", newFriendHandler);
+
+    return () => {
+      pusherClient.unsubscribe(toPusherKey(`user:${otherUser.id}:chats`));
+      pusherClient.unsubscribe(toPusherKey(`user:${otherUser.id}:friends`));
+
+      pusherClient.unbind("new_message", chatHandler);
+      pusherClient.unbind("new_friend", newFriendHandler);
+    };
+  }, [pathname, pusherClient, router, otherUser.id, self.id]);
+
+  useEffect(() => {
+    if (pathname?.includes("chat")) {
+      setUnseenMessages((prev) => {
+        return prev.filter((msg) => !pathname.includes(msg.senderId));
+      });
+    }
+  }, [pathname]);
 
   return (
     <div
       role="button"
-      onClick={onClick}
       className={cn(
-        "group rounded-md bg-transparent hover:bg-secondary dark:hover:bg-secondary/80 transition mx-2 p-2",
+        "group relative rounded-md bg-transparent hover:bg-secondary dark:hover:bg-secondary/80 transition mx-2 p-2",
         isCurrentUser ? "bg-secondary" : "bg-transparent"
       )}>
       <div className="flex items-center justify-between">
-        <div className="flex items-center justify-center">
-          <Hint label={user.username} show={collapsed}>
-            <UserAvatar
-              username={user.username}
-              imageUrl={user.imageUrl}
-              size="md"
-            />
-          </Hint>
-          <div className={cn("text-sm ml-2", collapsed && "hidden")}>
-            <p className="capitalize font-semibold">
-              {user.username} {self?.id === user?.externalUserId && "(You)"}
-            </p>
-            <p
-              title={status || ""}
-              className="text-xs text-muted-foreground overflow-hidden overflow-ellipsis whitespace-nowrap max-w-[200px]">
-              {status}
-            </p>
+        <a href={`/chat/${otherUser.username}`}>
+          <div className="flex items-center justify-center">
+            <Hint label={otherUser.username} show={collapsed}>
+              <UserAvatar
+                username={otherUser.username}
+                imageUrl={otherUser.imageUrl}
+                size="md"
+              />
+            </Hint>
+            <div className={cn("text-sm ml-2", collapsed && "hidden")}>
+              <p className="capitalize font-semibold">
+                {otherUser.username} {self?.id === otherUser?.id && "(You)"}
+              </p>
+              <p
+                title={status || ""}
+                className="text-xs text-muted-foreground overflow-hidden overflow-ellipsis whitespace-nowrap max-w-[200px]">
+                {status}
+              </p>
+            </div>
           </div>
-        </div>
+        </a>
         <div
           className={cn(
             "opacity-0 group-hover:opacity-100 transition",
             collapsed && "hidden"
           )}>
-          <UserCardOptions user={user} />
+          <UserCardOptions user={otherUser} />
         </div>
       </div>
+      {unseenMessagesCount > 0 && (
+        <div className="absolute top-0 -left-2">
+          <Badge className="bg-black dark:bg-white">
+            {unseenMessagesCount}
+          </Badge>
+        </div>
+      )}
     </div>
   );
 };
