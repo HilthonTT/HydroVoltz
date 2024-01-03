@@ -39,7 +39,7 @@ const UsernamePage = async ({ params }: UsernamePageProps) => {
   return (
     <>
       <Sidebar self={self} friends={friends} />
-      <Container className="max-h-[calc(100vh-6rem)]">
+      <Container className="max-h-[calc(95vh-6rem)]">
         <ChatHeader user={otherUser} />
         <ChatMessages user={self} initialMessages={messages} />
         <ChatInput user={otherUser} conversationId={conversation.id} />
