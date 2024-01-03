@@ -8,9 +8,10 @@ import { cn } from "@/lib/utils";
 
 interface ContainerProps {
   children: React.ReactNode;
+  className?: string;
 }
 
-export const Container = ({ children }: ContainerProps) => {
+export const Container = ({ children, className }: ContainerProps) => {
   const matches = useMediaQuery("(max-width: 1024px)");
   const { collapsed, onCollapse, onExpand } = useChatSidebar((state) => state);
 
@@ -26,7 +27,8 @@ export const Container = ({ children }: ContainerProps) => {
     <div
       className={cn(
         "h-full flex-1",
-        collapsed ? "ml-[100px]" : "ml-[100px] lg:ml-80"
+        collapsed ? "ml-[100px]" : "ml-[100px] lg:ml-80",
+        className
       )}>
       {children}
     </div>

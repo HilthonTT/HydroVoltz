@@ -6,8 +6,6 @@ import { ClerkProvider } from "@clerk/nextjs";
 import { Toaster } from "sonner";
 
 import { ThemeProvider } from "@/components/providers/theme-provider";
-import { SocketProvider } from "@/components/providers/socket-provider";
-import { QueryProvider } from "@/components/providers/query-provider";
 import { ModalProvider } from "@/components/providers/modal-provider";
 
 const inter = Inter({ subsets: ["latin"] });
@@ -40,13 +38,9 @@ export default function RootLayout({
             defaultTheme="system"
             enableSystem
             disableTransitionOnChange>
-            <SocketProvider>
-              <QueryProvider>
-                <Toaster />
-                <ModalProvider />
-                {children}
-              </QueryProvider>
-            </SocketProvider>
+            <Toaster />
+            <ModalProvider />
+            {children}
           </ThemeProvider>
         </body>
       </html>
