@@ -9,6 +9,7 @@ import { useAction } from "@/hooks/use-action";
 import { createDirectMessage } from "@/actions/create-direct-message";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
+import { Skeleton } from "@/components/ui/skeleton";
 
 interface ChatInputProps {
   user: User;
@@ -74,6 +75,16 @@ export const ChatInput = ({ user, conversationId }: ChatInputProps) => {
             )}
           </Button>
         </div>
+      </div>
+    </div>
+  );
+};
+
+export const ChatInputSkeleton = () => {
+  return (
+    <div className="mt-auto relative p-4 bottom-10">
+      <div className="flex-1 overflow-hidden rounded-lg shadow-sm">
+        <Skeleton className="w-full block h-20" />
       </div>
     </div>
   );

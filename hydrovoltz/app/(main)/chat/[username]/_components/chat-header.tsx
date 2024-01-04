@@ -2,8 +2,9 @@
 
 import { User } from "@prisma/client";
 
-import { UserAvatar } from "@/components/user-avatar";
+import { UserAvatar, UserAvatarSkeleton } from "@/components/user-avatar";
 import { useUserModal } from "@/store/use-user-modal";
+import { Skeleton } from "@/components/ui/skeleton";
 
 interface ChatHeaderProps {
   user: User;
@@ -33,6 +34,18 @@ export const ChatHeader = ({ user }: ChatHeaderProps) => {
             {status}
           </p>
         </div>
+      </div>
+    </div>
+  );
+};
+
+export const ChatHeaderSkeleton = () => {
+  return (
+    <div className="bg-secondary/30 h-14 flex items-center  p-2 w-full">
+      <UserAvatarSkeleton />
+      <div className="ml-2 space-y-2">
+        <Skeleton className="h-4 w-16" />
+        <Skeleton className="h-4 w-24" />
       </div>
     </div>
   );

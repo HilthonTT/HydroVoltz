@@ -6,7 +6,7 @@ import { DirectMessage, User } from "@prisma/client";
 import { pusherClient } from "@/lib/pusher";
 import { toPusherKey } from "@/lib/utils";
 
-import { ChatMessage } from "./chat-message";
+import { ChatMessage, ChatMessageSkeleton } from "./chat-message";
 
 type DirectMessageWithUser = DirectMessage & {
   user: User;
@@ -55,6 +55,17 @@ export const ChatMessages = ({
       <div ref={scrollDownRef} />
       {messages.map((message) => (
         <ChatMessage key={message.id} message={message} user={user} />
+      ))}
+    </div>
+  );
+};
+
+export const ChatMessagesSkeleton = () => {
+  return (
+    <div className="flex flex-1 flex-col-reverse gap-4 p-3 overflow-y-auto max-h-[calc(100vh-6rem)] h-[85%]">
+      <div />
+      {[...Array(10)].map((_, index) => (
+        <ChatMessageSkeleton key={index} />
       ))}
     </div>
   );
