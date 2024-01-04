@@ -1,5 +1,7 @@
 "use server";
 
+import { v4 } from "uuid";
+
 import { getSelf } from "@/lib/auth-service";
 import { pusherServer } from "@/lib/pusher";
 import { createSafeAction } from "@/lib/create-safe-action";
@@ -22,7 +24,10 @@ const handler = async (data: InputType): Promise<ReturnType> => {
 
   let directMessage;
   try {
+    const id = v4();
+
     directMessage = {
+      id,
       content,
       fileUrl,
       conversationId,
@@ -50,6 +55,7 @@ const handler = async (data: InputType): Promise<ReturnType> => {
 
     directMessage = await db.directMessage.create({
       data: {
+        id: id,
         content,
         fileUrl,
         conversationId,

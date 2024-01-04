@@ -10,6 +10,7 @@ import { cn } from "@/lib/utils";
 import { UserAvatar } from "@/components/user-avatar";
 import { Button } from "@/components/ui/button";
 import { useUserModal } from "@/store/use-user-modal";
+import { useModal } from "@/store/use-modal";
 
 interface ChatMessageProps {
   message: DirectMessage & { user: User };
@@ -18,7 +19,8 @@ interface ChatMessageProps {
 
 export const ChatMessage = ({ message, user }: ChatMessageProps) => {
   const [isCopied, setIsCopied] = useState(false);
-  const { onOpen } = useUserModal();
+  const { onOpen: onUserOpen } = useUserModal((state) => state);
+  const { onOpen } = useModal((state) => state);
 
   const isOwner = user?.id === message?.user?.id;
 
@@ -36,6 +38,10 @@ export const ChatMessage = ({ message, user }: ChatMessageProps) => {
     }, 1000);
   };
 
+  const onDelete = () => {
+    onOpen("deleteDirectMessage", { directMessage: message });
+  };
+
   return (
     <div
       className={cn(
@@ -45,7 +51,7 @@ export const ChatMessage = ({ message, user }: ChatMessageProps) => {
       {isOwner && (
         <Button
           aria-label="Delete my message"
-          onClick={onCopy}
+          onClick={onDelete}
           className="opacity-0 group-hover:opacity-100 transition mt-auto"
           size="icon"
           variant="ghost">
@@ -54,11 +60,11 @@ export const ChatMessage = ({ message, user }: ChatMessageProps) => {
       )}
       {!isOwner && (
         <button
-          onClick={() => onOpen(message.user)}
+          onClick={() => onUserOpen(message?.user)}
           className="w-auto h-auto rounded-full"
           aria-label={`Open ${message.user}'s profile`}>
           <UserAvatar
-            username={message?.user?.imageUrl}
+            username={message?.user?.username}
             imageUrl={message?.user?.imageUrl}
             size="lg"
           />
@@ -83,11 +89,11 @@ export const ChatMessage = ({ message, user }: ChatMessageProps) => {
       </div>
       {isOwner && (
         <button
-          onClick={() => onOpen(message.user)}
+          onClick={() => onUserOpen(message?.user)}
           className="w-auto h-auto rounded-full"
           aria-label="Open my profile">
           <UserAvatar
-            username={message?.user?.imageUrl}
+            username={message?.user?.username}
             imageUrl={message?.user?.imageUrl}
             size="lg"
           />

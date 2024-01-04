@@ -30,16 +30,23 @@ export const ChatMessages = ({
   useEffect(() => {
     pusherClient.subscribe(toPusherKey(`chat:${conversationId}`));
 
-    const messageHandler = (message: DirectMessageWithUser) => {
-      console.log("Message received!");
+    const newMessageHandler = (message: DirectMessageWithUser) => {
+      console.log({ message });
+
       setMessages((prev) => [message, ...prev]);
     };
 
-    pusherClient.bind("incoming-messages", messageHandler);
+    const deletedMessageHandler = ({ id }: { id: string }) => {
+      setMessages((prev) => prev.filter((message) => message.id !== id));
+    };
+
+    pusherClient.bind("incoming-messages", newMessageHandler);
+    pusherClient.bind("deleted-message", deletedMessageHandler);
 
     return () => {
       pusherClient.unsubscribe(toPusherKey(`chat:${conversationId}`));
-      pusherClient.unbind("incoming-messages", messageHandler);
+      pusherClient.unbind("incoming-messages", newMessageHandler);
+      pusherClient.unbind("deleted-message", deletedMessageHandler);
     };
   }, [conversationId]);
 

@@ -3,6 +3,7 @@
 import { useIsClient } from "usehooks-ts";
 
 import { UserModal } from "@/components/modals/user-modal";
+import { DeleteDirectMessageModal } from "@/components/modals/delete-direct-message-modal";
 
 export const ModalProvider = () => {
   const isClient = useIsClient();
@@ -14,6 +15,7 @@ export const ModalProvider = () => {
   return (
     <>
       <UserModal />
+      <DeleteDirectMessageModal />
     </>
   );
 };
