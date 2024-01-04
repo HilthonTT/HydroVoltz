@@ -36,7 +36,7 @@ export const Search = () => {
 
     const url = qs.stringifyUrl(
       {
-        url: "/chat",
+        url: window.location.href,
         query: {
           username: value,
         },

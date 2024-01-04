@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { User } from "@prisma/client";
 import { useIsClient } from "usehooks-ts";
-import { usePathname, useRouter } from "next/navigation";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { toast } from "sonner";
 
 import { WidgetWrapper } from "@/components/widget-wrapper";
@@ -21,15 +21,17 @@ import { Toggle } from "./toggle";
 
 interface UserSidebarProps {
   self: User;
-  friends: User[];
+  initialFriends: User[];
 }
 
-export const Sidebar = ({ self, friends }: UserSidebarProps) => {
+export const Sidebar = ({ self, initialFriends }: UserSidebarProps) => {
   const isClient = useIsClient();
   const pathname = usePathname();
+  const searchParams = useSearchParams();
   const router = useRouter();
   const { collapsed } = useChatSidebar((state) => state);
 
+  const [friends, setFriends] = useState<User[]>(initialFriends);
   const [unseenMessages, setUnseenMessages] = useState<ExtendedMessage[]>([]);
 
   useEffect(() => {
@@ -70,6 +72,19 @@ export const Sidebar = ({ self, friends }: UserSidebarProps) => {
       pusherClient.unbind("new_friend", newFriendHandler);
     };
   }, [pathname, router, self.id, setUnseenMessages]);
+
+  useEffect(() => {
+    const username = searchParams?.get("username")?.toLocaleLowerCase();
+
+    if (username) {
+      const filteredFriends = initialFriends.filter(
+        (friend) => friend.username === username
+      );
+      setFriends(filteredFriends);
+    } else {
+      setFriends(initialFriends);
+    }
+  }, [searchParams, initialFriends]);
 
   if (!isClient) {
     return <UserSidebarSkeleton />;

@@ -82,9 +82,9 @@ export const ChatInput = ({ user, conversationId }: ChatInputProps) => {
 
 export const ChatInputSkeleton = () => {
   return (
-    <div className="mt-auto relative p-4 bottom-10">
+    <div className="mt-auto relative p-4 bottom-6">
       <div className="flex-1 overflow-hidden rounded-lg shadow-sm">
-        <Skeleton className="w-full block h-20" />
+        <Skeleton className="w-full mt-2 block h-20" />
       </div>
     </div>
   );
