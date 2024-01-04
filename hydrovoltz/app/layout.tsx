@@ -39,6 +39,7 @@ export default function RootLayout({
             enableSystem
             disableTransitionOnChange>
             <Toaster />
+
             <ModalProvider />
             {children}
           </ThemeProvider>

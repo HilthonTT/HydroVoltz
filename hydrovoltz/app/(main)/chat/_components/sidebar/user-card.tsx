@@ -43,8 +43,8 @@ export const UserCard = ({ user: otherUser, self }: UserCardProps) => {
   }).length;
 
   useEffect(() => {
-    pusherClient.subscribe(toPusherKey(`user:${self.id}:chats`));
-    pusherClient.subscribe(toPusherKey(`user:${self.id}:friends`));
+    const chatChannel = toPusherKey(`user:${self.id}:chats`);
+    const friendChannel = toPusherKey(`user:${self.id}:friends`);
 
     const chatHandler = (message: ExtendedMessage) => {
       const shouldNotify = pathname !== `/chat/${message.senderName}`;
@@ -61,17 +61,17 @@ export const UserCard = ({ user: otherUser, self }: UserCardProps) => {
       router.refresh();
     };
 
-    pusherClient.bind("new_message", chatHandler);
-    pusherClient.bind("new_friend", newFriendHandler);
+    pusherClient.subscribe(chatChannel).bind("new_message", chatHandler);
+    pusherClient.subscribe(friendChannel).bind("new_friend", newFriendHandler);
 
     return () => {
-      pusherClient.unsubscribe(toPusherKey(`user:${otherUser.id}:chats`));
-      pusherClient.unsubscribe(toPusherKey(`user:${otherUser.id}:friends`));
+      pusherClient.unsubscribe(chatChannel);
+      pusherClient.unsubscribe(friendChannel);
 
       pusherClient.unbind("new_message", chatHandler);
       pusherClient.unbind("new_friend", newFriendHandler);
     };
-  }, [pathname, pusherClient, router, otherUser.id, self.id]);
+  }, [pathname, router, self.id, setUnseenMessages]);
 
   useEffect(() => {
     if (pathname?.includes("chat")) {
