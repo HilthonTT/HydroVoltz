@@ -28,6 +28,9 @@ model User {
   conversationInitied   Conversation[] @relation("userOne")
   conversationReceived  Conversation[] @relation("userTwo")
 
+  blocking              Block[] @relation("Blocking")
+  blockedBy             Block[] @relation("BlockedBy")
+
   createdAt             DateTime  @default(now())
   updatedAt             DateTime  @updatedAt
 
@@ -108,4 +111,18 @@ model Conversation {
   @@index([userTwoId])
 
   @@unique([userOneId, userTwoId])
+}
+
+model Block {
+  id String @id @default(uuid())
+
+  blockerId String
+  blockedId String
+
+  blocker User @relation(name: "Blocking", fields: [blockerId], references: [id], onDelete: Cascade)
+  blocked User @relation(name: "BlockedBy",  fields: [blockedId], references: [id], onDelete: Cascade)
+
+  @@unique([blockedId, blockerId])
+  @@index([blockedId])
+  @@index([blockerId])
 }

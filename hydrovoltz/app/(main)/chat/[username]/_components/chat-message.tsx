@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { useState } from "react";
 import { formatDistanceToNow } from "date-fns";
 import { DirectMessage, User } from "@prisma/client";
@@ -81,6 +82,16 @@ export const ChatMessage = ({ message, user }: ChatMessageProps) => {
         </span>
         <div className="rounded-md px-4 py-2 max-w-sm text-sm bg-primary/10">
           <p>{message.content}</p>
+          {message.fileUrl && (
+            <div className="relative aspect-video my-4 rounded-xl border outline-dashed outline-muted">
+              <Image
+                src={message.fileUrl}
+                alt="Image"
+                className="object-cover"
+                fill
+              />
+            </div>
+          )}
           <p className="text-xs text-muted-foreground">
             {formatDistanceToNow(new Date(message.createdAt), {
               addSuffix: true,

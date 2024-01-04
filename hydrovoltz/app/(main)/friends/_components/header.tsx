@@ -4,9 +4,9 @@ import Link from "next/link";
 import { Users, X } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
+import { Skeleton } from "@/components/ui/skeleton";
 
 import { AddFriendButton } from "./add-friend-button";
-import { Skeleton } from "@/components/ui/skeleton";
 
 interface HeaderProps {
   label: string;
@@ -15,37 +15,49 @@ interface HeaderProps {
 export const Header = ({ label }: HeaderProps) => {
   return (
     <div className="bg-secondary rounded-lg p-5">
-      <div className="flex justify-between items-center">
-        <div className="flex items-center justify-center">
-          <h1 className="flex items-center justify-center gap-x-2">
-            <Users className="h-6 w-6" />
-            <span className="font-semibold">{label}</span>
-          </h1>
-          <div className="space-x-3 ml-3">
-            <Button className="h-auto w-auto" variant="ghost" asChild>
-              <Link href="/friends">All</Link>
-            </Button>
-            <Button className="h-auto w-auto" variant="ghost" asChild>
-              <Link href="/friends/pending">Pending</Link>
-            </Button>
-            <Button className="h-auto w-auto" variant="ghost" asChild>
-              <Link href="/friends/added">Added</Link>
-            </Button>
-            <Button className="h-auto w-auto" variant="ghost" asChild>
-              <Link href="/friends/blocked">Blocked</Link>
-            </Button>
-            <AddFriendButton />
-          </div>
+      <div className="flex flex-col md:flex-row md:justify-between md:items-center">
+        <h1 className="flex items-center justify-center gap-x-2 mb-3 md:mb-0">
+          <Users className="h-6 w-6" />
+          <span className="font-semibold">{label}</span>
+        </h1>
+        <div className="flex flex-wrap justify-center md:justify-start">
+          <Button
+            className="h-auto w-auto mb-2 md:mb-0 md:mr-3"
+            variant="ghost"
+            asChild>
+            <Link href="/friends">All</Link>
+          </Button>
+          <Button
+            className="h-auto w-auto mb-2 md:mb-0 md:mr-3"
+            variant="ghost"
+            asChild>
+            <Link href="/friends/pending">Pending</Link>
+          </Button>
+          <Button
+            className="h-auto w-auto mb-2 md:mb-0 md:mr-3"
+            variant="ghost"
+            asChild>
+            <Link href="/friends/added">Added</Link>
+          </Button>
+          <Button
+            className="h-auto w-auto mb-2 md:mb-0 md:mr-3"
+            variant="ghost"
+            asChild>
+            <Link href="/friends/blocked">Blocked</Link>
+          </Button>
+          <AddFriendButton />
         </div>
-        <div>
-          <Link href="/chat">
-            <Button asChild variant="ghost" className="h-auto w-auto">
-              <div>
-                <X className="h-6 w-6" />
-                <span className="sr-only">Close</span>
-              </div>
-            </Button>
-          </Link>
+        <div className="md:block md:relative">
+          <div className="absolute right-6 top-[7rem] md:static md:top-auto md:right-auto">
+            <Link href="/chat">
+              <Button asChild variant="ghost" className="h-auto w-auto">
+                <div>
+                  <X className="h-6 w-6" />
+                  <span className="sr-only">Close</span>
+                </div>
+              </Button>
+            </Link>
+          </div>
         </div>
       </div>
     </div>
