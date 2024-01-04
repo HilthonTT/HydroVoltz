@@ -1,8 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { toast } from "sonner";
-import { useParams, usePathname, useRouter } from "next/navigation";
+import { useParams } from "next/navigation";
 import { User } from "@prisma/client";
 
 import { Badge } from "@/components/ui/badge";
@@ -10,8 +8,7 @@ import { UserAvatar } from "@/components/user-avatar";
 import { Hint } from "@/components/hint";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useChatSidebar } from "@/store/use-chat-sidebar";
-import { cn, toPusherKey } from "@/lib/utils";
-import { pusherClient } from "@/lib/pusher";
+import { cn } from "@/lib/utils";
 import { ExtendedMessage } from "@/types";
 
 import { UserCardOptions } from "./user-card-options";
@@ -19,16 +16,17 @@ import { UserCardOptions } from "./user-card-options";
 interface UserCardProps {
   user: User;
   self: User;
+  unseenMessages?: ExtendedMessage[];
 }
 
-export const UserCard = ({ user: otherUser, self }: UserCardProps) => {
+export const UserCard = ({
+  user: otherUser,
+  self,
+  unseenMessages = [],
+}: UserCardProps) => {
   const params = useParams();
-  const router = useRouter();
-  const pathname = usePathname();
 
   const { collapsed } = useChatSidebar((state) => state);
-
-  const [unseenMessages, setUnseenMessages] = useState<ExtendedMessage[]>([]);
 
   const { username } = params!;
   const isCurrentUser = username === otherUser.username;
@@ -41,45 +39,6 @@ export const UserCard = ({ user: otherUser, self }: UserCardProps) => {
   const unseenMessagesCount = unseenMessages.filter((unseenMessage) => {
     return unseenMessage.senderId === otherUser.id;
   }).length;
-
-  useEffect(() => {
-    const chatChannel = toPusherKey(`user:${self.id}:chats`);
-    const friendChannel = toPusherKey(`user:${self.id}:friends`);
-
-    const chatHandler = (message: ExtendedMessage) => {
-      const shouldNotify = pathname !== `/chat/${message.senderName}`;
-
-      if (!shouldNotify) {
-        return;
-      }
-
-      toast.info(`${message.senderName} has sent you a message!`);
-      setUnseenMessages((prev) => [...prev, message]);
-    };
-
-    const newFriendHandler = () => {
-      router.refresh();
-    };
-
-    pusherClient.subscribe(chatChannel).bind("new_message", chatHandler);
-    pusherClient.subscribe(friendChannel).bind("new_friend", newFriendHandler);
-
-    return () => {
-      pusherClient.unsubscribe(chatChannel);
-      pusherClient.unsubscribe(friendChannel);
-
-      pusherClient.unbind("new_message", chatHandler);
-      pusherClient.unbind("new_friend", newFriendHandler);
-    };
-  }, [pathname, router, self.id, setUnseenMessages]);
-
-  useEffect(() => {
-    if (pathname?.includes("chat")) {
-      setUnseenMessages((prev) => {
-        return prev.filter((msg) => !pathname.includes(msg.senderId));
-      });
-    }
-  }, [pathname]);
 
   return (
     <div

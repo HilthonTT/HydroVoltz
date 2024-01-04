@@ -43,8 +43,8 @@ export const ChatInput = ({ user, conversationId }: ChatInputProps) => {
   };
 
   return (
-    <div className="mt-auto p-4 mb-2">
-      <div className="relative flex-1 overflow-hidden rounded-lg shadow-sm">
+    <div className="mt-auto p-4 mb-2 relative">
+      <div className="flex-1 overflow-hidden rounded-lg shadow-sm">
         <Textarea
           ref={textareaRef}
           id="content"
@@ -56,7 +56,7 @@ export const ChatInput = ({ user, conversationId }: ChatInputProps) => {
           onChange={(e) => setContent(e.target.value)}
         />
       </div>
-      <div className="absolute right-6 bottom-10 flex justify-between py-2 pl-3 pr-2">
+      <div className="absolute right-6 bottom-6 flex items-center justify-between py-2 pl-3 pr-2">
         <div className="flex-shrink-0">
           <Button
             aria-label="Send message"

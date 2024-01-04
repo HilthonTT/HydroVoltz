@@ -1,13 +1,15 @@
 "use client";
 
 import { useState } from "react";
+import { formatDistanceToNow } from "date-fns";
 import { DirectMessage, User } from "@prisma/client";
 import { toast } from "sonner";
-import { Copy, CopyCheck } from "lucide-react";
+import { Copy, CopyCheck, Trash } from "lucide-react";
 
 import { cn } from "@/lib/utils";
 import { UserAvatar } from "@/components/user-avatar";
 import { Button } from "@/components/ui/button";
+import { useUserModal } from "@/store/use-user-modal";
 
 interface ChatMessageProps {
   message: DirectMessage & { user: User };
@@ -16,6 +18,7 @@ interface ChatMessageProps {
 
 export const ChatMessage = ({ message, user }: ChatMessageProps) => {
   const [isCopied, setIsCopied] = useState(false);
+  const { onOpen } = useUserModal();
 
   const isOwner = user?.id === message?.user?.id;
 
@@ -39,22 +42,56 @@ export const ChatMessage = ({ message, user }: ChatMessageProps) => {
         "group flex items-center gap-x-3 py-4 w-full",
         isOwner && "justify-end"
       )}>
-      {!isOwner && (
-        <UserAvatar
-          username={message?.user?.imageUrl}
-          imageUrl={message?.user?.imageUrl}
-          size="lg"
-        />
+      {isOwner && (
+        <Button
+          aria-label="Delete my message"
+          onClick={onCopy}
+          className="opacity-0 group-hover:opacity-100 transition mt-auto"
+          size="icon"
+          variant="ghost">
+          <Trash className="w-4 h-4" />
+        </Button>
       )}
-      <div className="rounded-md px-4 py-2 max-w-sm text-sm bg-primary/10">
-        {message.content}
+      {!isOwner && (
+        <button
+          onClick={() => onOpen(message.user)}
+          className="w-auto h-auto rounded-full"
+          aria-label={`Open ${message.user}'s profile`}>
+          <UserAvatar
+            username={message?.user?.imageUrl}
+            imageUrl={message?.user?.imageUrl}
+            size="lg"
+          />
+        </button>
+      )}
+      <div
+        className={cn(
+          "flex flex-col justify-center",
+          isOwner ? "items-end" : "items-start"
+        )}>
+        <span className="text-sm font-semibold capitalize px-1">
+          {message.user.username}
+        </span>
+        <div className="rounded-md px-4 py-2 max-w-sm text-sm bg-primary/10">
+          <p>{message.content}</p>
+          <p className="text-xs text-muted-foreground">
+            {formatDistanceToNow(new Date(message.createdAt), {
+              addSuffix: true,
+            })}
+          </p>
+        </div>
       </div>
       {isOwner && (
-        <UserAvatar
-          username={message?.user?.imageUrl}
-          imageUrl={message?.user?.imageUrl}
-          size="lg"
-        />
+        <button
+          onClick={() => onOpen(message.user)}
+          className="w-auto h-auto rounded-full"
+          aria-label="Open my profile">
+          <UserAvatar
+            username={message?.user?.imageUrl}
+            imageUrl={message?.user?.imageUrl}
+            size="lg"
+          />
+        </button>
       )}
       {!isOwner && (
         <Button

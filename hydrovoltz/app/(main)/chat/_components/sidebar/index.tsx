@@ -1,13 +1,19 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import { User } from "@prisma/client";
 import { useIsClient } from "usehooks-ts";
+import { usePathname, useRouter } from "next/navigation";
+import { toast } from "sonner";
 
 import { WidgetWrapper } from "@/components/widget-wrapper";
 import { Separator } from "@/components/ui/separator";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useChatSidebar } from "@/store/use-chat-sidebar";
+import { toPusherKey } from "@/lib/utils";
+import { pusherClient } from "@/lib/pusher";
+import { ExtendedMessage } from "@/types";
 
 import { UserCard, UserCardSkeleton } from "./user-card";
 import { Search } from "./search";
@@ -20,7 +26,50 @@ interface UserSidebarProps {
 
 export const Sidebar = ({ self, friends }: UserSidebarProps) => {
   const isClient = useIsClient();
+  const pathname = usePathname();
+  const router = useRouter();
   const { collapsed } = useChatSidebar((state) => state);
+
+  const [unseenMessages, setUnseenMessages] = useState<ExtendedMessage[]>([]);
+
+  useEffect(() => {
+    if (pathname?.includes("chat")) {
+      setUnseenMessages((prev) => {
+        return prev.filter((msg) => !pathname.includes(msg.senderId));
+      });
+    }
+  }, [pathname]);
+
+  useEffect(() => {
+    const chatChannel = toPusherKey(`user:${self.id}:chats`);
+    const friendChannel = toPusherKey(`user:${self.id}:friends`);
+
+    const chatHandler = (message: ExtendedMessage) => {
+      const shouldNotify = pathname !== `/chat/${message.senderName}`;
+
+      if (!shouldNotify) {
+        return;
+      }
+
+      toast.info(`${message.senderName} has sent you a message!`);
+      setUnseenMessages((prev) => [...prev, message]);
+    };
+
+    const newFriendHandler = () => {
+      router.refresh();
+    };
+
+    pusherClient.subscribe(chatChannel).bind("new_message", chatHandler);
+    pusherClient.subscribe(friendChannel).bind("new_friend", newFriendHandler);
+
+    return () => {
+      pusherClient.unsubscribe(chatChannel);
+      pusherClient.unsubscribe(friendChannel);
+
+      pusherClient.unbind("new_message", chatHandler);
+      pusherClient.unbind("new_friend", newFriendHandler);
+    };
+  }, [pathname, router, self.id, setUnseenMessages]);
 
   if (!isClient) {
     return <UserSidebarSkeleton />;
@@ -37,7 +86,12 @@ export const Sidebar = ({ self, friends }: UserSidebarProps) => {
         </div>
         <ScrollArea className="h-[680px] w-full p-4">
           {friends?.map((friend) => (
-            <UserCard key={friend.id} user={friend} self={self} />
+            <UserCard
+              key={friend.id}
+              user={friend}
+              self={self}
+              unseenMessages={unseenMessages}
+            />
           ))}
         </ScrollArea>
       </div>
