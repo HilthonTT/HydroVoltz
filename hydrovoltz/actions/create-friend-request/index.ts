@@ -4,8 +4,10 @@ import { revalidatePath } from "next/cache";
 
 import { getSelf } from "@/lib/auth-service";
 import { createSafeAction } from "@/lib/create-safe-action";
+import { isBlockedByUser } from "@/lib/block-service";
 import { pusherServer } from "@/lib/pusher";
 import { toPusherKey } from "@/lib/utils";
+
 import { db } from "@/lib/db";
 
 import { InputType, ReturnType } from "./types";
@@ -39,6 +41,14 @@ const handler = async (data: InputType): Promise<ReturnType> => {
     if (!user) {
       return {
         error: "User not found",
+      };
+    }
+
+    const isBlocked = await isBlockedByUser(user.id);
+
+    if (isBlocked) {
+      return {
+        error: "You are currently blocked by this user",
       };
     }
 

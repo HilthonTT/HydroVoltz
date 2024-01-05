@@ -1,6 +1,6 @@
 "use client";
 
-import { X } from "lucide-react";
+import { UserX } from "lucide-react";
 import { ElementRef, useRef } from "react";
 import { toast } from "sonner";
 import { User } from "@prisma/client";
@@ -16,7 +16,6 @@ import {
 } from "@/components/ui/dialog";
 import { useAction } from "@/hooks/use-action";
 import { deleteFriend } from "@/actions/delete-friend";
-import { Hint } from "@/components/hint";
 
 interface DeleteFriendButtonProps {
   id: string;
@@ -50,13 +49,9 @@ export const DeleteFriendButton = ({ id, self }: DeleteFriendButtonProps) => {
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <Button variant="ghost" className="h-auto w-auto" disabled={isLoading}>
-          <Hint label="Remove Friend" asChild>
-            <div>
-              <X className="h-5 w-5" />
-              <span className="sr-only">Remove Friend</span>
-            </div>
-          </Hint>
+        <Button variant="ghost" className="w-full h-auto p-1">
+          <UserX className="h-6 w-6 mr-2" />
+          <span className="font-semibold">Remove Friend</span>
         </Button>
       </DialogTrigger>
       <DialogContent>
@@ -65,7 +60,7 @@ export const DeleteFriendButton = ({ id, self }: DeleteFriendButtonProps) => {
         </DialogHeader>
         <div className="flex items-center justify-between">
           <DialogClose ref={closeRef} asChild>
-            <Button disabled={isLoading} type="button" variant="ghost">
+            <Button type="button" variant="ghost">
               Close
             </Button>
           </DialogClose>

@@ -83,7 +83,11 @@ export const blockUser = async (id: string) => {
         },
       },
     });
+  } catch (error) {
+    // Means that the user is not found
+  }
 
+  try {
     await db.friend.delete({
       where: {
         initiatorId_friendId: {
@@ -92,7 +96,9 @@ export const blockUser = async (id: string) => {
         },
       },
     });
-  } catch (error) {}
+  } catch (error) {
+    // Means that the user is not found
+  }
 
   return block;
 };
@@ -137,4 +143,27 @@ export const unblockUser = async (id: string) => {
   });
 
   return unblock;
+};
+
+export const getBlockedUsers = async () => {
+  const self = await getSelf();
+
+  if (!self) {
+    throw new Error("Unauthorized");
+  }
+
+  const blocks = await db.block.findMany({
+    where: {
+      blockerId: self.id,
+    },
+    include: {
+      blocked: true,
+    },
+  });
+
+  const blockedUsers = blocks.map((block) => {
+    return block.blocked;
+  });
+
+  return blockedUsers;
 };

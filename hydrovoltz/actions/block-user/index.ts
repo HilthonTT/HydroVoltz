@@ -29,6 +29,7 @@ const handler = async (data: InputType): Promise<ReturnType> => {
     };
   }
 
+  revalidatePath(`/friends`);
   revalidatePath(`/friends/blocked`);
 
   return { data: blockedUser };
