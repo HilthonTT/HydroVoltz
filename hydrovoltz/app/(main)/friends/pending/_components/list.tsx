@@ -1,20 +1,59 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import { useIsClient } from "usehooks-ts";
+import { User } from "@prisma/client";
 
 import { FriendRequestWithReceiverAndSender } from "@/types";
 import { Separator } from "@/components/ui/separator";
 import { Skeleton } from "@/components/ui/skeleton";
+import { EmptyList } from "@/components/list-empty";
+import { pusherClient } from "@/lib/pusher";
+import { toPusherKey } from "@/lib/utils";
 
 import { RequestCard } from "./request-card";
-import { EmptyList } from "@/components/list-empty";
 
 interface ListProps {
-  data: FriendRequestWithReceiverAndSender[];
+  initialRequests: FriendRequestWithReceiverAndSender[];
+  self: User;
 }
 
-export const List = ({ data }: ListProps) => {
+export const List = ({ initialRequests, self }: ListProps) => {
+  const [requests, setRequests] =
+    useState<FriendRequestWithReceiverAndSender[]>(initialRequests);
+
   const isClient = useIsClient();
+
+  useEffect(() => {
+    const friendChannel = toPusherKey(
+      `user:${self.id}:incoming_friend_requests`
+    );
+
+    const newRequestHandler = (
+      newRequest: FriendRequestWithReceiverAndSender
+    ) => {
+      setRequests((prev) => {
+        const isDuplicate = prev.some(
+          (request) => request.id === newRequest.id
+        );
+
+        if (!isDuplicate) {
+          return [...prev, newRequest];
+        }
+
+        return prev;
+      });
+    };
+
+    pusherClient
+      .subscribe(friendChannel)
+      .bind("incoming_friend_requests", newRequestHandler);
+
+    return () => {
+      pusherClient.unsubscribe(friendChannel);
+      pusherClient.unbind("incoming_friend_requests", newRequestHandler);
+    };
+  }, [self.id]);
 
   if (!isClient) {
     return <ListSkeleton />;
@@ -23,14 +62,14 @@ export const List = ({ data }: ListProps) => {
   return (
     <div className="p-1">
       <h2 className="font-semibold text-xl lg:text-2xl">
-        Pending Friend Requests - {data?.length || 0}
+        Pending Friend Requests - {requests?.length || 0}
       </h2>
       <Separator className="my-4" />
       <div className="space-y-4">
-        {data?.length === 0 && (
+        {requests?.length === 0 && (
           <EmptyList label="There are no pending friend requests. He's a dead corpse for you." />
         )}
-        {data?.map((request) => (
+        {requests?.map((request) => (
           <RequestCard key={request.id} request={request} />
         ))}
       </div>

@@ -4,6 +4,8 @@ import { revalidatePath } from "next/cache";
 
 import { getSelf } from "@/lib/auth-service";
 import { createSafeAction } from "@/lib/create-safe-action";
+import { pusherServer } from "@/lib/pusher";
+import { toPusherKey } from "@/lib/utils";
 import { db } from "@/lib/db";
 
 import { InputType, ReturnType } from "./types";
@@ -66,7 +68,14 @@ const handler = async (data: InputType): Promise<ReturnType> => {
       },
     });
 
+    const key = toPusherKey(`user:${user.id}:incoming_friend_requests`);
+    console.log(key);
+
+    await pusherServer.trigger(key, "incoming_friend_requests", friendRequest);
+
     revalidatePath("/friends");
+    revalidatePath("/friends/added");
+
     return { data: friendRequest };
   } catch (error) {
     return {

@@ -1,15 +1,19 @@
 import { getPendingFriendRequests } from "@/lib/friend-service";
+import { getSelf } from "@/lib/auth-service";
 
 import { Container } from "../_components/container";
 
 import { List } from "./_components/list";
 
 const PendingPage = async () => {
-  const pending = await getPendingFriendRequests();
+  const [self, friendRequests] = await Promise.all([
+    getSelf(),
+    getPendingFriendRequests(),
+  ]);
 
   return (
     <Container label="Pending Friend Requests">
-      <List data={pending} />
+      <List initialRequests={friendRequests} self={self} />
     </Container>
   );
 };

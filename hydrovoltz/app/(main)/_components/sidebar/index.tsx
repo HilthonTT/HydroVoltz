@@ -1,23 +1,30 @@
 "use client";
 
-import { useUser } from "@clerk/nextjs";
+import { Friend, User } from "@prisma/client";
+import { useIsClient } from "usehooks-ts";
 
 import { Skeleton } from "@/components/ui/skeleton";
+import { FriendRequestWithReceiverAndSender } from "@/types";
 
 import { RoutesBottom } from "./routes-bottom";
 import { RoutesTops } from "./routes-top";
 import { Wrapper } from "./wrapper";
 
-export const Sidebar = () => {
-  const { isLoaded } = useUser();
+interface SidebarProps {
+  self: User;
+  friendRequests: FriendRequestWithReceiverAndSender[];
+}
 
-  if (!isLoaded) {
+export const Sidebar = ({ self, friendRequests }: SidebarProps) => {
+  const isClient = useIsClient();
+
+  if (!isClient) {
     return <SidebarSkeleton />;
   }
 
   return (
     <Wrapper>
-      <RoutesTops />
+      <RoutesTops self={self} friendRequests={friendRequests} />
       <RoutesBottom />
     </Wrapper>
   );

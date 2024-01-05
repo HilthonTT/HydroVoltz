@@ -5,8 +5,7 @@ import { List } from "./_components/list";
 import { Container } from "./_components/container";
 
 const FriendsPage = async () => {
-  const self = await getSelf();
-  const friends = await getFriends();
+  const [self, friends] = await Promise.all([getSelf(), getFriends()]);
 
   return (
     <Container label="All friends">

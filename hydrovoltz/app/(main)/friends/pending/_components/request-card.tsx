@@ -1,6 +1,7 @@
 "use client";
 
 import { Verified, X } from "lucide-react";
+import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 
 import { FriendRequestWithReceiverAndSender } from "@/types";
@@ -16,11 +17,14 @@ interface RequestCardProps {
 }
 
 export const RequestCard = ({ request }: RequestCardProps) => {
+  const router = useRouter();
+
   const { execute: executeAccept, isLoading: isAcceptLoading } = useAction(
     acceptFriendRequest,
     {
       onSuccess: () => {
         toast.success("Friend request accept!");
+        router.refresh();
       },
       onError: (error) => {
         toast.error(error);
@@ -33,6 +37,7 @@ export const RequestCard = ({ request }: RequestCardProps) => {
     {
       onSuccess: () => {
         toast.success("Friend request declined!");
+        router.refresh();
       },
       onError: (error) => {
         toast.error(error);

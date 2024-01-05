@@ -14,7 +14,7 @@ export const Route = ({ label, href, children }: RouteProps) => {
   return (
     <Link
       href={href}
-      className="rounded-md hover:bg-zinc-600 transition p-2 mx-auto">
+      className="relative rounded-md hover:bg-zinc-600 transition p-2 mx-auto">
       <div className="flex justify-center items-center">
         <Hint label={label} side="right">
           <div>{children}</div>

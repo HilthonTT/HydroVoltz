@@ -18,7 +18,13 @@ export const Logo = ({ className }: LogoProps) => {
             "h-16 w-16 relative bg-white rounded-full border-2 border-gray-500 dark:border-0",
             className
           )}>
-          <Image src="./logo.svg" alt="Logo" className="object-cover" fill />
+          <Image
+            src="./logo.svg"
+            alt="Logo"
+            className="object-cover"
+            priority
+            fill
+          />
         </div>
       </div>
     </Link>
