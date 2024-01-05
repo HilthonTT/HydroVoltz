@@ -25,25 +25,25 @@ export const Header = ({ label }: HeaderProps) => {
             className="h-auto w-auto mb-2 md:mb-0 md:mr-3"
             variant="ghost"
             asChild>
-            <Link href="/friends">All</Link>
+            <a href="/friends">All</a>
           </Button>
           <Button
             className="h-auto w-auto mb-2 md:mb-0 md:mr-3"
             variant="ghost"
             asChild>
-            <Link href="/friends/pending">Pending</Link>
+            <a href="/friends/pending">Pending</a>
           </Button>
           <Button
             className="h-auto w-auto mb-2 md:mb-0 md:mr-3"
             variant="ghost"
             asChild>
-            <Link href="/friends/added">Added</Link>
+            <a href="/friends/added">Added</a>
           </Button>
           <Button
             className="h-auto w-auto mb-2 md:mb-0 md:mr-3"
             variant="ghost"
             asChild>
-            <Link href="/friends/blocked">Blocked</Link>
+            <a href="/friends/blocked">Blocked</a>
           </Button>
           <AddFriendButton />
         </div>

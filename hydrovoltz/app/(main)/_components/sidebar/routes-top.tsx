@@ -4,12 +4,13 @@ import { useEffect, useState } from "react";
 import { Friend, User } from "@prisma/client";
 import { MessageSquareText, Pencil, PhoneCall, Users } from "lucide-react";
 
+import { Badge } from "@/components/ui/badge";
 import { toPusherKey } from "@/lib/utils";
 import { pusherClient } from "@/lib/pusher";
 import { FriendRequestWithReceiverAndSender } from "@/types";
 
 import { Route } from "./route";
-import { Badge } from "@/components/ui/badge";
+
 interface RoutesTopsProps {
   self: User;
   friendRequests: FriendRequestWithReceiverAndSender[];
@@ -63,13 +64,30 @@ export const RoutesTops = ({ self, friendRequests }: RoutesTopsProps) => {
       });
     };
 
-    pusherClient
-      .subscribe(friendChannel)
-      .bind("incoming_friend_requests", newRequestHandler);
+    pusherClient.subscribe(friendChannel);
+    pusherClient.bind("incoming_friend_requests", newRequestHandler);
 
     return () => {
       pusherClient.unsubscribe(friendChannel);
       pusherClient.unbind("incoming_friend_requests", newRequestHandler);
+    };
+  }, [self.id]);
+
+  useEffect(() => {
+    const acceptDeclinChannel = toPusherKey(
+      `user:${self.id}:declined_accepted_friend_requests`
+    );
+
+    const onAcceptDecline = ({ id }: { id: string }) => {
+      setRequests((prev) => prev.filter((request) => request.id !== id));
+    };
+
+    pusherClient.subscribe(acceptDeclinChannel);
+    pusherClient.bind("declined_accepted_friend_requests", onAcceptDecline);
+
+    return () => {
+      pusherClient.unsubscribe(acceptDeclinChannel);
+      pusherClient.unbind("declined_accepted_friend_requests", onAcceptDecline);
     };
   }, [self.id]);
 
@@ -80,12 +98,15 @@ export const RoutesTops = ({ self, friendRequests }: RoutesTopsProps) => {
       {routes?.map(({ href, icon: Icon, label }) => {
         const isFriendRequests = href === "/friends";
 
+        const requestCount =
+          friendRequestsCount > 99 ? "99+" : friendRequestsCount;
+
         return (
           <Route key={href} href={href} label={label}>
             <Icon className="h-6 w-6" />
-            {isFriendRequests && (
+            {isFriendRequests && friendRequestsCount > 0 && (
               <div className="absolute -top-2 -right-2">
-                <Badge className="p-[2px]">{friendRequestsCount}</Badge>
+                <Badge className="p-[2px]">{requestCount}</Badge>
               </div>
             )}
           </Route>

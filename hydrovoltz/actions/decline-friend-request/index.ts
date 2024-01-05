@@ -4,6 +4,8 @@ import { revalidatePath } from "next/cache";
 
 import { createSafeAction } from "@/lib/create-safe-action";
 import { getSelf } from "@/lib/auth-service";
+import { toPusherKey } from "@/lib/utils";
+import { pusherServer } from "@/lib/pusher";
 import { db } from "@/lib/db";
 
 import { InputType, ReturnType } from "./types";
@@ -31,6 +33,16 @@ const handler = async (data: InputType): Promise<ReturnType> => {
         status: "DECLINED",
       },
     });
+
+    const acceptDeclineKey = toPusherKey(
+      `user:${request.senderId}:declined_accepted_friend_requests`
+    );
+
+    await pusherServer.trigger(
+      acceptDeclineKey,
+      "declined_accepted_friend_requests",
+      { id }
+    );
   } catch (error) {
     return {
       error: "An error occurred while declining the friend request",

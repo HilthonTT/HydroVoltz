@@ -45,15 +45,20 @@ export const List = ({ initialRequests, self }: ListProps) => {
       });
     };
 
-    pusherClient
-      .subscribe(friendChannel)
-      .bind("incoming_friend_requests", newRequestHandler);
+    pusherClient.subscribe(friendChannel);
+    pusherClient.bind("incoming_friend_requests", newRequestHandler);
 
     return () => {
       pusherClient.unsubscribe(friendChannel);
       pusherClient.unbind("incoming_friend_requests", newRequestHandler);
     };
   }, [self.id]);
+
+  const onAction = (id: string) => {
+    const updatedRequests = requests.filter((request) => request.id !== id);
+
+    setRequests(updatedRequests);
+  };
 
   if (!isClient) {
     return <ListSkeleton />;
@@ -70,7 +75,7 @@ export const List = ({ initialRequests, self }: ListProps) => {
           <EmptyList label="There are no pending friend requests. He's a dead corpse for you." />
         )}
         {requests?.map((request) => (
-          <RequestCard key={request.id} request={request} />
+          <RequestCard key={request.id} request={request} onAction={onAction} />
         ))}
       </div>
     </div>

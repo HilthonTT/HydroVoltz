@@ -69,8 +69,6 @@ const handler = async (data: InputType): Promise<ReturnType> => {
     });
 
     const key = toPusherKey(`user:${user.id}:incoming_friend_requests`);
-    console.log(key);
-
     await pusherServer.trigger(key, "incoming_friend_requests", friendRequest);
 
     revalidatePath("/friends");

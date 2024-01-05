@@ -9,7 +9,6 @@ import { toPusherKey } from "@/lib/utils";
 import { db } from "@/lib/db";
 
 import { InputType, ReturnType } from "./types";
-
 import { AcceptFriendRequest } from "./schema";
 
 const handler = async (data: InputType): Promise<ReturnType> => {
@@ -51,10 +50,18 @@ const handler = async (data: InputType): Promise<ReturnType> => {
 
     const selfKey = toPusherKey(`user:${self.id}:friends`);
     const otherKey = toPusherKey(`user:${request.sender.id}:friends`);
+    const acceptDeclineKey = toPusherKey(
+      `user:${request.senderId}:declined_accepted_friend_requests`
+    );
 
     const triggerFriendPromises = [
       pusherServer.trigger(otherKey, "new_friend", self),
       pusherServer.trigger(selfKey, "new_friend", request.receiver),
+      await pusherServer.trigger(
+        acceptDeclineKey,
+        "declined_accepted_friend_requests",
+        { id: requestId }
+      ),
       db.friend.create({
         data: {
           initiatorId: request.senderId,

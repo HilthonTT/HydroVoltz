@@ -1,19 +1,17 @@
 "use client";
 
-import { Friend, User } from "@prisma/client";
+import { User } from "@prisma/client";
 import { useIsClient } from "usehooks-ts";
 
 import { Separator } from "@/components/ui/separator";
 import { Skeleton } from "@/components/ui/skeleton";
 import { EmptyList } from "@/components/list-empty";
+import { FriendWithFriendWithInitiator } from "@/types";
 
 import { FriendCard } from "./friend-card";
 
 interface ListProps {
-  friends: (Friend & {
-    friend: User;
-    initiator: User;
-  })[];
+  friends: FriendWithFriendWithInitiator[];
   self: User;
 }
 

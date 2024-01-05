@@ -1,7 +1,6 @@
 "use client";
 
 import { Verified, X } from "lucide-react";
-import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 
 import { FriendRequestWithReceiverAndSender } from "@/types";
@@ -14,17 +13,16 @@ import { Hint } from "@/components/hint";
 
 interface RequestCardProps {
   request: FriendRequestWithReceiverAndSender;
+  onAction: (id: string) => void;
 }
 
-export const RequestCard = ({ request }: RequestCardProps) => {
-  const router = useRouter();
-
+export const RequestCard = ({ request, onAction }: RequestCardProps) => {
   const { execute: executeAccept, isLoading: isAcceptLoading } = useAction(
     acceptFriendRequest,
     {
       onSuccess: () => {
-        toast.success("Friend request accept!");
-        router.refresh();
+        toast.success("Friend request accepted!");
+        onAction(request.id);
       },
       onError: (error) => {
         toast.error(error);
@@ -37,7 +35,7 @@ export const RequestCard = ({ request }: RequestCardProps) => {
     {
       onSuccess: () => {
         toast.success("Friend request declined!");
-        router.refresh();
+        onAction(request.id);
       },
       onError: (error) => {
         toast.error(error);
@@ -47,10 +45,16 @@ export const RequestCard = ({ request }: RequestCardProps) => {
 
   const onAccept = () => {
     executeAccept({ id: request.id });
+
+    toast.success("Friend request accepted!");
+    onAction(request.id);
   };
 
   const onDecline = () => {
     executeDecline({ id: request.id });
+
+    toast.success("Friend request declined!");
+    onAction(request.id);
   };
 
   const isLoading = isDeclineLoading || isAcceptLoading;
