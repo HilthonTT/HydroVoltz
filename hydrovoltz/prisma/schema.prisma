@@ -31,6 +31,9 @@ model User {
   blocking              Block[] @relation("Blocking")
   blockedBy             Block[] @relation("BlockedBy")
 
+  callsInitiated        Call[] @relation("userOne")
+  callsReceived         Call[] @relation("userTwo")
+
   createdAt             DateTime  @default(now())
   updatedAt             DateTime  @updatedAt
 
@@ -113,14 +116,31 @@ model Conversation {
   @@unique([userOneId, userTwoId])
 }
 
+model Call {
+  id          String @id @default(uuid())
+
+  userOneId   String
+  userOne     User @relation("userOne", fields: [userOneId], references: [id], onDelete: Cascade)
+
+  userTwoId   String
+  userTwo     User @relation("userTwo", fields: [userTwoId], references: [id], onDelete: Cascade)
+
+  lastCalled  DateTime @default(now())
+
+  @@index([userOneId])
+  @@index([userTwoId])
+
+  @@unique([userOneId, userTwoId])
+}
+
 model Block {
-  id String @id @default(uuid())
+  id        String @id @default(uuid())
 
   blockerId String
   blockedId String
 
-  blocker User @relation(name: "Blocking", fields: [blockerId], references: [id], onDelete: Cascade)
-  blocked User @relation(name: "BlockedBy",  fields: [blockedId], references: [id], onDelete: Cascade)
+  blocker   User @relation(name: "Blocking", fields: [blockerId], references: [id], onDelete: Cascade)
+  blocked   User @relation(name: "BlockedBy",  fields: [blockedId], references: [id], onDelete: Cascade)
 
   @@unique([blockedId, blockerId])
   @@index([blockedId])
