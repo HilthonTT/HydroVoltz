@@ -1,4 +1,4 @@
-import { Friend, FriendRequest, User } from "@prisma/client";
+import { Call, Friend, FriendRequest, User } from "@prisma/client";
 
 export type FriendRequestWithReceiverAndSender = FriendRequest & {
   receiver: User;
@@ -14,4 +14,9 @@ export type ExtendedMessage = {
   senderId: string;
   senderImage: string;
   senderName: string;
+};
+
+export type CallWithUser = Call & {
+  userOne: User;
+  userTwo: User;
 };

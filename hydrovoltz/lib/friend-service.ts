@@ -1,10 +1,43 @@
 import { db } from "@/lib/db";
 import { getSelf } from "@/lib/auth-service";
 
+export const isFriendsWithUsername = async (username: string) => {
+  const self = await getSelf();
+
+  const friend = await db.friend.findFirst({
+    where: {
+      AND: [
+        {
+          OR: [
+            {
+              initiator: {
+                username: self.username,
+              },
+              friend: {
+                username: username,
+              },
+            },
+            {
+              initiator: {
+                username: username,
+              },
+              friend: {
+                username: self.username,
+              },
+            },
+          ],
+        },
+      ],
+    },
+  });
+
+  return !!friend;
+};
+
 export const isFriends = async (userId: string) => {
   const self = await getSelf();
 
-  const friends = await db.friend.findFirst({
+  const friend = await db.friend.findFirst({
     where: {
       AND: [
         {
@@ -23,7 +56,7 @@ export const isFriends = async (userId: string) => {
     },
   });
 
-  return !!friends;
+  return !!friend;
 };
 
 export const getFriends = async () => {

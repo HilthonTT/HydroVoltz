@@ -8,17 +8,19 @@ import { WidgetWrapper } from "@/components/widget-wrapper";
 import { Separator } from "@/components/ui/separator";
 import { useCallSidebar } from "@/store/use-call-sidebar";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { CallWithUser } from "@/types";
 
 import { CallCard, CallCardSkeleton } from "./call-card";
 import { Toggle } from "./toggle";
 import { Search } from "./search";
 
 interface SidebarProps {
-  calls: Call[];
+  calls: CallWithUser[];
   friends: User[];
+  self: User;
 }
 
-export const CallSidebar = ({ calls, friends }: SidebarProps) => {
+export const CallSidebar = ({ calls, friends, self }: SidebarProps) => {
   const isClient = useIsClient();
   const { collapsed } = useCallSidebar((state) => state);
 
@@ -40,7 +42,7 @@ export const CallSidebar = ({ calls, friends }: SidebarProps) => {
       )}
       <ScrollArea className="h-[680px] w-full p-4">
         {calls.map((call) => (
-          <CallCard key={call.id} call={call} />
+          <CallCard key={call.id} call={call} self={self} />
         ))}
       </ScrollArea>
     </WidgetWrapper>

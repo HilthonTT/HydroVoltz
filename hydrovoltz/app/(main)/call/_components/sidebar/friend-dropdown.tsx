@@ -34,30 +34,11 @@ export const FriendDropdown = ({ friends }: FriendDropdownProps) => {
     }
   };
 
-  const onVoiceCall = () => {
+  const onCall = () => {
     if (!selectedFriend) {
       return;
     }
-
-    const url = qs.stringifyUrl({
-      url: `/call/${selectedFriend.id}`,
-      query: { voice: true },
-    });
-
-    router.push(url);
-  };
-
-  const onVideoCall = () => {
-    if (!selectedFriend) {
-      return;
-    }
-
-    const url = qs.stringifyUrl({
-      url: `/call/${selectedFriend.id}`,
-      query: { video: true },
-    });
-
-    router.push(url);
+    router.push(`/call/${selectedFriend.username}`);
   };
 
   return (
@@ -77,13 +58,8 @@ export const FriendDropdown = ({ friends }: FriendDropdownProps) => {
         <div>
           {!!selectedFriend && (
             <div className="flex items-center justify-between">
-              <Hint label="Video Call" asChild>
-                <Button variant="outline" onClick={onVideoCall}>
-                  <Video className="h-5 w-5" />
-                </Button>
-              </Hint>
               <Hint label="Voice Call" asChild>
-                <Button variant="outline" onClick={onVoiceCall}>
+                <Button variant="outline" onClick={onCall}>
                   <Phone className="h-5 w-5" />
                 </Button>
               </Hint>

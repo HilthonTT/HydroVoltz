@@ -4,6 +4,7 @@ import { getSelf } from "@/lib/auth-service";
 import { getUserByUsername } from "@/lib/user-service";
 import { getOrCreateConversation } from "@/lib/conversation-service";
 import { getDirectMessages } from "@/lib/direct-message-service";
+import { isFriendsWithUsername } from "@/lib/friend-service";
 
 import { ChatHeader } from "./_components/chat-header";
 import { ChatInput } from "./_components/chat-input";
@@ -16,9 +17,16 @@ interface UsernamePageProps {
 }
 
 const UsernamePage = async ({ params }: UsernamePageProps) => {
-  const self = await getSelf();
-  const otherUser = await getUserByUsername(params.username, self);
+  const [self, isFriends] = await Promise.all([
+    getSelf(),
+    isFriendsWithUsername(params.username),
+  ]);
 
+  if (!isFriends) {
+    return notFound();
+  }
+
+  const otherUser = await getUserByUsername(params.username, self);
   if (!otherUser) {
     return notFound();
   }
