@@ -35,4 +35,4 @@ const handler = async (data: InputType): Promise<ReturnType> => {
   return { data: unblockedUser };
 };
 
-export const blockUser = createSafeAction(UnBlockUser, handler);
+export const unblockUser = createSafeAction(UnBlockUser, handler);

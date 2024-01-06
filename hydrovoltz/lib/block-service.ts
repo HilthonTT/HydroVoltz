@@ -167,3 +167,26 @@ export const getBlockedUsers = async () => {
 
   return blockedUsers;
 };
+
+export const isBlockedByCurrentUser = async (id: string) => {
+  const self = await getSelf();
+
+  if (!self) {
+    throw new Error("Unauthorized");
+  }
+
+  if (id === self.id) {
+    return false;
+  }
+
+  const existingBlock = await db.block.findUnique({
+    where: {
+      blockedId_blockerId: {
+        blockedId: id,
+        blockerId: self.id,
+      },
+    },
+  });
+
+  return !!existingBlock;
+};

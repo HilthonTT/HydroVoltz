@@ -4,10 +4,9 @@ import { revalidatePath } from "next/cache";
 
 import { getSelf } from "@/lib/auth-service";
 import { createSafeAction } from "@/lib/create-safe-action";
-import { isBlockedByUser } from "@/lib/block-service";
+import { isBlockedByUser, isBlockedByCurrentUser } from "@/lib/block-service";
 import { pusherServer } from "@/lib/pusher";
 import { toPusherKey } from "@/lib/utils";
-
 import { db } from "@/lib/db";
 
 import { InputType, ReturnType } from "./types";
@@ -44,9 +43,16 @@ const handler = async (data: InputType): Promise<ReturnType> => {
       };
     }
 
-    const isBlocked = await isBlockedByUser(user.id);
+    const isBlockedByOtherUser = await isBlockedByUser(user.id);
+    const isBlockedBySelf = await isBlockedByCurrentUser(user.id);
 
-    if (isBlocked) {
+    if (isBlockedBySelf) {
+      return {
+        error: "You are currently blocking this user",
+      };
+    }
+
+    if (isBlockedByOtherUser) {
       return {
         error: "You are currently blocked by this user",
       };
