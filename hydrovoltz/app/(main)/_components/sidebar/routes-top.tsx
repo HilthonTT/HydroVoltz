@@ -1,13 +1,14 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Friend, User } from "@prisma/client";
+import { toast } from "sonner";
+import { User } from "@prisma/client";
 import { MessageSquareText, Pencil, PhoneCall, Users } from "lucide-react";
 
 import { Badge } from "@/components/ui/badge";
 import { toPusherKey } from "@/lib/utils";
 import { pusherClient } from "@/lib/pusher";
-import { FriendRequestWithReceiverAndSender } from "@/types";
+import { CallWithUser, FriendRequestWithReceiverAndSender } from "@/types";
 
 import { Route } from "./route";
 
@@ -17,8 +18,12 @@ interface RoutesTopsProps {
 }
 
 export const RoutesTops = ({ self, friendRequests }: RoutesTopsProps) => {
+  const [isNotified, setIsNotified] = useState(false);
+
   const [requests, setRequests] =
     useState<FriendRequestWithReceiverAndSender[]>(friendRequests);
+
+  const [calls, setCalls] = useState<CallWithUser[]>([]);
 
   const routes = [
     {
@@ -48,6 +53,8 @@ export const RoutesTops = ({ self, friendRequests }: RoutesTopsProps) => {
       `user:${self.id}:incoming_friend_requests`
     );
 
+    const callChannel = toPusherKey(`user:${self.id}:incoming_calls`);
+
     const newRequestHandler = (
       newRequest: FriendRequestWithReceiverAndSender
     ) => {
@@ -64,17 +71,47 @@ export const RoutesTops = ({ self, friendRequests }: RoutesTopsProps) => {
       });
     };
 
+    const newCallHandler = (newCall: CallWithUser) => {
+      const otherUser =
+        newCall.userOneId === self.id ? newCall.userTwo : newCall.userOne;
+
+      setCalls((prev) => {
+        const isDuplicate = prev.some((call) => call.id === newCall.id);
+
+        if (!isDuplicate) {
+          return [...prev, newCall];
+        }
+
+        return prev;
+      });
+
+      if (isNotified) {
+        return;
+      }
+
+      setIsNotified(true);
+
+      setTimeout(() => {
+        toast.info(`${otherUser.username} has attempted to call you!`);
+        setIsNotified(false);
+      }, 1000);
+    };
+
     pusherClient.subscribe(friendChannel);
+    pusherClient.subscribe(callChannel);
     pusherClient.bind("incoming_friend_requests", newRequestHandler);
+    pusherClient.bind("incoming_calls", newCallHandler);
 
     return () => {
       pusherClient.unsubscribe(friendChannel);
+      pusherClient.unsubscribe(callChannel);
       pusherClient.unbind("incoming_friend_requests", newRequestHandler);
+      pusherClient.unbind("incoming_calls", newCallHandler);
     };
   }, [self.id]);
 
   useEffect(() => {
-    const acceptDeclinChannel = toPusherKey(
+    const acceptDeclineChannel = toPusherKey(
       `user:${self.id}:declined_accepted_friend_requests`
     );
 
@@ -82,11 +119,11 @@ export const RoutesTops = ({ self, friendRequests }: RoutesTopsProps) => {
       setRequests((prev) => prev.filter((request) => request.id !== id));
     };
 
-    pusherClient.subscribe(acceptDeclinChannel);
+    pusherClient.subscribe(acceptDeclineChannel);
     pusherClient.bind("declined_accepted_friend_requests", onAcceptDecline);
 
     return () => {
-      pusherClient.unsubscribe(acceptDeclinChannel);
+      pusherClient.unsubscribe(acceptDeclineChannel);
       pusherClient.unbind("declined_accepted_friend_requests", onAcceptDecline);
     };
   }, [self.id]);
@@ -97,9 +134,10 @@ export const RoutesTops = ({ self, friendRequests }: RoutesTopsProps) => {
     <div className="flex flex-col space-y-5 mt-5">
       {routes?.map(({ href, icon: Icon, label }) => {
         const isFriendRequests = href === "/friends";
+        const isCall = href === "/call";
 
-        const requestCount =
-          friendRequestsCount > 99 ? "99+" : friendRequestsCount;
+        const requestCount = requests.length > 99 ? "99+" : requests.length;
+        const callCount = calls.length > 99 ? "99+" : calls.length;
 
         return (
           <Route key={href} href={href} label={label}>
@@ -107,6 +145,11 @@ export const RoutesTops = ({ self, friendRequests }: RoutesTopsProps) => {
             {isFriendRequests && friendRequestsCount > 0 && (
               <div className="absolute -top-2 -right-2">
                 <Badge className="p-[2px]">{requestCount}</Badge>
+              </div>
+            )}
+            {isCall && calls.length > 0 && (
+              <div className="absolute -top-2 -right-2">
+                <Badge className="p-[2px]">{callCount}</Badge>
               </div>
             )}
           </Route>

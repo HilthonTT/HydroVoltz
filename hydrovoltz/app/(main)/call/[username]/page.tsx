@@ -5,6 +5,8 @@ import { getOrCreateCall } from "@/lib/call-service";
 import { getSelf } from "@/lib/auth-service";
 import { getUserByUsername } from "@/lib/user-service";
 import { MediaRoom } from "@/components/media-room";
+import { pusherServer } from "@/lib/pusher";
+import { toPusherKey } from "@/lib/utils";
 
 interface CallIdPageProps {
   params: {
@@ -31,6 +33,12 @@ const CallIdPage = async ({ params }: CallIdPageProps) => {
   if (!call) {
     return redirect("/call");
   }
+
+  await pusherServer.trigger(
+    toPusherKey(`user:${otherUser.id}:incoming_calls`),
+    "incoming_calls",
+    call
+  );
 
   return <MediaRoom callId={call.id} video={true} audio={true} />;
 };

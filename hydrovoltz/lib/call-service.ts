@@ -9,6 +9,10 @@ const findCall = async (userOneId: string, userTwoId: string) => {
         userTwoId,
       },
     },
+    include: {
+      userOne: true,
+      userTwo: true,
+    },
   });
 
   return call;
@@ -19,6 +23,10 @@ const createCall = async (userOneId: string, userTwoId: string) => {
     data: {
       userOneId,
       userTwoId,
+    },
+    include: {
+      userOne: true,
+      userTwo: true,
     },
   });
 
