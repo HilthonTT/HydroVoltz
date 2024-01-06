@@ -78,11 +78,18 @@ export const Sidebar = ({ self, initialFriends }: UserSidebarProps) => {
       });
     };
 
-    pusherClient.subscribe(friendChannel).bind("new_friend", newFriendHandler);
+    const removedFriend = ({ id }: { id: string }) => {
+      setFriends((prev) => prev.filter((friend) => friend.id !== id));
+    };
+
+    pusherClient.subscribe(friendChannel);
+    pusherClient.bind("new_friend", newFriendHandler);
+    pusherClient.bind("removed_friend", removedFriend);
 
     return () => {
       pusherClient.unsubscribe(friendChannel);
       pusherClient.unbind("new_friend", newFriendHandler);
+      pusherClient.unbind("removed_friend", removedFriend);
     };
   }, [self.id]);
 

@@ -9,7 +9,7 @@ const FriendsPage = async () => {
 
   return (
     <Container label="All friends">
-      <List friends={friends} self={self} />
+      <List initialFriends={friends} self={self} />
     </Container>
   );
 };
