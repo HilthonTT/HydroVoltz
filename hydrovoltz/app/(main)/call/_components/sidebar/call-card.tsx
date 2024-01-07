@@ -26,14 +26,14 @@ export const CallCard = ({ call, self }: CallCardProps) => {
   const isCurrentUser = username === otherUser.username;
 
   return (
-    <div
-      role="button"
-      className={cn(
-        "group relative rounded-md bg-transparent hover:bg-secondary dark:hover:bg-secondary/80 transition mx-2 p-2",
-        isCurrentUser ? "bg-secondary" : "bg-transparent"
-      )}>
-      <div className="flex items-center justify-between">
-        <Link href={`/call/${otherUser.username}`}>
+    <Link href={`/call/${otherUser.username}`}>
+      <div
+        role="button"
+        className={cn(
+          "group relative rounded-md bg-transparent hover:bg-secondary dark:hover:bg-secondary/80 transition mx-2 p-2",
+          isCurrentUser ? "bg-secondary" : "bg-transparent"
+        )}>
+        <div className="flex items-center justify-between">
           <div className="flex items-center justify-center">
             <Hint label={otherUser.username} show={collapsed}>
               <UserAvatar
@@ -48,9 +48,9 @@ export const CallCard = ({ call, self }: CallCardProps) => {
               </p>
             </div>
           </div>
-        </Link>
+        </div>
       </div>
-    </div>
+    </Link>
   );
 };
 

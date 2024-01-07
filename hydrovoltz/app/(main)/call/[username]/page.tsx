@@ -29,6 +29,10 @@ const CallIdPage = async ({ params }: CallIdPageProps) => {
     return notFound();
   }
 
+  if (otherUser.username === self.username) {
+    return redirect("/call");
+  }
+
   const call = await getOrCreateCall(self.id, otherUser.id);
   if (!call) {
     return redirect("/call");

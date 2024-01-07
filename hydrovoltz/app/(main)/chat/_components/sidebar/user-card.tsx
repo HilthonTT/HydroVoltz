@@ -74,7 +74,7 @@ export const UserCard = ({
             "opacity-0 group-hover:opacity-100 transition",
             collapsed && "hidden"
           )}>
-          <UserCardOptions user={otherUser} />
+          <UserCardOptions user={otherUser} self={self} />
         </div>
       </div>
       {unseenMessagesCount > 0 && (

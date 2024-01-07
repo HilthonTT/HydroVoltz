@@ -2,7 +2,8 @@
 
 import { User } from "@prisma/client";
 import { toast } from "sonner";
-import { Copy, MoreVertical, UserIcon } from "lucide-react";
+import { Copy, MoreVertical, PhoneCall, UserIcon } from "lucide-react";
+import { useRouter } from "next/navigation";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -16,19 +17,25 @@ import { Hint } from "@/components/hint";
 
 interface UserCardOptionsProps {
   user: User;
+  self: User;
 }
 
-export const UserCardOptions = ({ user }: UserCardOptionsProps) => {
+export const UserCardOptions = ({ user, self }: UserCardOptionsProps) => {
+  const router = useRouter();
   const { onOpen } = useUserModal((state) => state);
 
   const handleOpen = () => {
     onOpen(user);
   };
 
-  const onUsernameCopy = () => {
+  const handleUsernameCopy = () => {
     navigator.clipboard.writeText(user?.username);
 
     toast.success("Copied username!");
+  };
+
+  const handleCall = () => {
+    router.push(`/call/${user.username}`);
   };
 
   return (
@@ -44,7 +51,9 @@ export const UserCardOptions = ({ user }: UserCardOptionsProps) => {
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent className="w-56">
-        <DropdownMenuItem onClick={onUsernameCopy} className="cursor-pointer">
+        <DropdownMenuItem
+          onClick={handleUsernameCopy}
+          className="cursor-pointer">
           <Copy className="h-4 w-4 mr-2" />
           <span>Copy Username</span>
         </DropdownMenuItem>
@@ -52,6 +61,12 @@ export const UserCardOptions = ({ user }: UserCardOptionsProps) => {
           <UserIcon className="h-4 w-4 mr-2" />
           <span>View Profile</span>
         </DropdownMenuItem>
+        {self.id !== user.id && (
+          <DropdownMenuItem onClick={handleCall} className="cursor-pointer">
+            <PhoneCall className="h-4 w-4 mr-2" />
+            <span>Call</span>
+          </DropdownMenuItem>
+        )}
       </DropdownMenuContent>
     </DropdownMenu>
   );
