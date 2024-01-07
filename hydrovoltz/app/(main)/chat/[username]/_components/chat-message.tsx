@@ -5,7 +5,7 @@ import { useState } from "react";
 import { formatDistanceToNow } from "date-fns";
 import { DirectMessage, User } from "@prisma/client";
 import { toast } from "sonner";
-import { Copy, CopyCheck, Trash } from "lucide-react";
+import { Copy, CopyCheck, Star, Trash } from "lucide-react";
 
 import { cn } from "@/lib/utils";
 import { UserAvatar, UserAvatarSkeleton } from "@/components/user-avatar";
@@ -13,6 +13,9 @@ import { Button } from "@/components/ui/button";
 import { useUserModal } from "@/store/use-user-modal";
 import { useModal } from "@/store/use-modal";
 import { Skeleton } from "@/components/ui/skeleton";
+import { useAction } from "@/hooks/use-action";
+import { starDirectMessage } from "@/actions/star-direct-message";
+import { unstarDirectMessage } from "@/actions/unstar-direct-message";
 
 interface ChatMessageProps {
   message: DirectMessage & { user: User };
@@ -21,6 +24,8 @@ interface ChatMessageProps {
 
 export const ChatMessage = ({ message, user }: ChatMessageProps) => {
   const [isCopied, setIsCopied] = useState(false);
+  const [isStarred, setIsStarred] = useState(message.starred);
+
   const { onOpen: onUserOpen } = useUserModal((state) => state);
   const { onOpen } = useModal((state) => state);
 
@@ -44,6 +49,38 @@ export const ChatMessage = ({ message, user }: ChatMessageProps) => {
     onOpen("deleteDirectMessage", { directMessage: message });
   };
 
+  const { execute: executeStar } = useAction(starDirectMessage, {
+    onSuccess: () => {
+      toast.success("Starred!");
+    },
+    onError: (error) => {
+      toast.error(error);
+    },
+  });
+
+  const { execute: executeUnstar } = useAction(unstarDirectMessage, {
+    onSuccess: () => {
+      toast.success("Unstarred!");
+    },
+    onError: (error) => {
+      toast.error(error);
+    },
+  });
+
+  const onStarToggle = () => {
+    const params = { id: message.id, conversationId: message.conversationId };
+
+    if (isStarred) {
+      setIsStarred(false);
+
+      executeUnstar(params);
+    } else {
+      setIsStarred(true);
+
+      executeStar(params);
+    }
+  };
+
   return (
     <div
       className={cn(
@@ -51,14 +88,29 @@ export const ChatMessage = ({ message, user }: ChatMessageProps) => {
         isOwner && "justify-end"
       )}>
       {isOwner && (
-        <Button
-          aria-label="Delete my message"
-          onClick={onDelete}
-          className="opacity-0 group-hover:opacity-100 transition mt-auto"
-          size="icon"
-          variant="ghost">
-          <Trash className="w-4 h-4" />
-        </Button>
+        <div className="flex flex-col p-0">
+          <Button
+            aria-label="Delete my message"
+            onClick={onDelete}
+            className="opacity-0 group-hover:opacity-100 transition mt-auto"
+            size="icon"
+            variant="ghost">
+            <Trash className="w-4 h-4" />
+          </Button>
+          <Button
+            aria-label="Star my message"
+            onClick={onStarToggle}
+            className="opacity-0 group-hover:opacity-100 transition mt-auto"
+            size="icon"
+            variant="ghost">
+            <Star
+              className={cn(
+                "w-4 h-4",
+                isStarred && "fill-yellow-500 stroke-yellow-500"
+              )}
+            />
+          </Button>
+        </div>
       )}
       {!isOwner && (
         <button
