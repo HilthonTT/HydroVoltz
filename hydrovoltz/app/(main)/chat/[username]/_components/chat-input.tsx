@@ -1,6 +1,6 @@
 "use client";
 
-import { ElementRef, KeyboardEvent, useRef, useState } from "react";
+import { ElementRef, KeyboardEvent, useEffect, useRef, useState } from "react";
 import { Loader2, MoreVertical, Send } from "lucide-react";
 import { User } from "@prisma/client";
 import { toast } from "sonner";
@@ -18,6 +18,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { FilePicker } from "@/components/file/file-picker";
+import { getConversationDraftKey } from "@/lib/utils";
 
 interface ChatInputProps {
   user: User;
@@ -55,6 +56,22 @@ export const ChatInput = ({ user, conversationId }: ChatInputProps) => {
     }
   };
 
+  const handleInputChange = (inputValue: string) => {
+    const draftKey = getConversationDraftKey(conversationId);
+
+    setContent(inputValue);
+    localStorage.setItem(draftKey, inputValue);
+  };
+
+  useEffect(() => {
+    const draftKey = getConversationDraftKey(conversationId);
+    const savedDraft = localStorage.getItem(draftKey);
+
+    if (savedDraft) {
+      setContent(savedDraft);
+    }
+  }, [conversationId]);
+
   return (
     <div className="mt-auto p-4 mb-2 relative">
       <div className="flex-1 overflow-hidden rounded-lg shadow-sm">
@@ -66,7 +83,7 @@ export const ChatInput = ({ user, conversationId }: ChatInputProps) => {
           rows={1}
           onKeyDown={onKeyDown}
           className="block w-full resize-none"
-          onChange={(e) => setContent(e.target.value)}
+          onChange={(e) => handleInputChange(e.target.value)}
         />
         <div className="absolute top-10 right-20">
           <div className="flex-shrink-0">

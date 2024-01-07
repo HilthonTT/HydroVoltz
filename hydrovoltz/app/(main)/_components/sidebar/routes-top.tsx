@@ -108,7 +108,7 @@ export const RoutesTops = ({ self, friendRequests }: RoutesTopsProps) => {
       pusherClient.unbind("incoming_friend_requests", newRequestHandler);
       pusherClient.unbind("incoming_calls", newCallHandler);
     };
-  }, [self.id]);
+  }, [self.id, isNotified]);
 
   useEffect(() => {
     const acceptDeclineChannel = toPusherKey(

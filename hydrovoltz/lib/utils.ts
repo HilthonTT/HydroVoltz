@@ -8,3 +8,7 @@ export function cn(...inputs: ClassValue[]) {
 export function toPusherKey(key: string) {
   return key.replace(/:/g, "__");
 }
+
+export function getConversationDraftKey(conversationId: string) {
+  return `conversation-draft-${conversationId}`;
+}
