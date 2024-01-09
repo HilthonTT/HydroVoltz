@@ -4,6 +4,7 @@ import { useIsClient } from "usehooks-ts";
 
 import { UserModal } from "@/components/modals/user-modal";
 import { DeleteDirectMessageModal } from "@/components/modals/delete-direct-message-modal";
+import { ProSupportModal } from "@/components/modals/pro-support-modal";
 
 export const ModalProvider = () => {
   const isClient = useIsClient();
@@ -16,6 +17,7 @@ export const ModalProvider = () => {
     <>
       <UserModal />
       <DeleteDirectMessageModal />
+      <ProSupportModal />
     </>
   );
 };

@@ -12,3 +12,7 @@ export function toPusherKey(key: string) {
 export function getConversationDraftKey(conversationId: string) {
   return `conversation-draft-${conversationId}`;
 }
+
+export function absoluteUrl(path: string) {
+  return `${process.env.NEXT_PUBLIC_APP_URL}${path}`;
+}

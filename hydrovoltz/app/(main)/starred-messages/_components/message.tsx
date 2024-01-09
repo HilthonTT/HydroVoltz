@@ -1,6 +1,5 @@
 "use client";
 
-import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { toast } from "sonner";
 import { ArrowRight, Copy, CopyCheck, Star } from "lucide-react";
@@ -19,7 +18,6 @@ interface MessageProps {
 }
 
 export const Message = ({ message, self }: MessageProps) => {
-  const router = useRouter();
   const [isCopied, setIsCopied] = useState(false);
 
   const otherUser =
@@ -40,10 +38,6 @@ export const Message = ({ message, self }: MessageProps) => {
     setTimeout(() => {
       setIsCopied(false);
     }, 1000);
-  };
-
-  const onGoToChat = () => {
-    router.push(`/chat/${otherUser.username}`);
   };
 
   return (
@@ -78,11 +72,13 @@ export const Message = ({ message, self }: MessageProps) => {
           </Hint>
           <Hint label="Go chat" side="right" asChild>
             <Button
-              onClick={onGoToChat}
               aria-label="Go chat"
               variant="ghost"
-              className="w-auto h-auto">
-              <ArrowRight className="h-6 w-6" />
+              className="w-auto h-auto"
+              asChild>
+              <a href={`/chat/${otherUser.username}`}>
+                <ArrowRight className="h-6 w-6" />
+              </a>
             </Button>
           </Hint>
         </div>

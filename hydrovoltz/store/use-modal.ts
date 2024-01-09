@@ -1,7 +1,7 @@
 import { DirectMessage, User } from "@prisma/client";
 import { create } from "zustand";
 
-export type ModalType = "deleteDirectMessage";
+export type ModalType = "deleteDirectMessage" | "proSupport";
 
 interface ModalData {
   directMessage?: DirectMessage & { user: User };

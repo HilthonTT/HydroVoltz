@@ -6,7 +6,6 @@ export default authMiddleware({
   afterAuth(auth, req) {
     if (auth.userId && auth.isPublicRoute) {
       const path = new URL("/chat", req.url);
-
       return NextResponse.redirect(path);
     }
   },
