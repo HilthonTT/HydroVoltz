@@ -63,7 +63,7 @@ export const UserCard = ({
               </p>
               <p
                 title={status || ""}
-                className="text-xs text-muted-foreground overflow-hidden overflow-ellipsis whitespace-nowrap max-w-[200px]">
+                className="text-xs text-muted-foreground overflow-hidden overflow-ellipsis whitespace-nowrap max-w-[160px]">
                 {status}
               </p>
             </div>
