@@ -22,7 +22,7 @@ const UsernamePage = async ({ params }: UsernamePageProps) => {
     isFriendsWithUsername(params.username),
   ]);
 
-  if (!isFriends) {
+  if (!isFriends && self.username !== params.username) {
     return notFound();
   }
 

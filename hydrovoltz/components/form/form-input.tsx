@@ -19,6 +19,7 @@ interface FormInputProps {
   errors?: Record<string, string[] | undefined>;
   className?: string;
   defaultValue?: string;
+  fullWidth?: boolean;
   onBlur?: () => void;
 }
 
@@ -34,6 +35,7 @@ export const FormInput = forwardRef<HTMLInputElement, FormInputProps>(
       errors,
       className,
       defaultValue = "",
+      fullWidth = false,
       onBlur,
     },
     ref
@@ -41,7 +43,7 @@ export const FormInput = forwardRef<HTMLInputElement, FormInputProps>(
     const { pending } = useFormStatus();
 
     return (
-      <div className="space-y-2">
+      <div className={cn("space-y-2", fullWidth && "w-full")}>
         <div className="space-y-1">
           {label && (
             <Label htmlFor={id} className="text-xs font-semibold text-primary">
@@ -58,7 +60,7 @@ export const FormInput = forwardRef<HTMLInputElement, FormInputProps>(
             id={id}
             required={required}
             disabled={pending || disabled}
-            className={cn("text-sm px-2 py-1 h-8", className)}
+            className={cn(className)}
             aria-describedby={`${id}-error`}
           />
         </div>
