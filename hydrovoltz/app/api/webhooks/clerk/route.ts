@@ -10,7 +10,7 @@ export async function POST(req: Request) {
     const WEBHOOK_SECRET = process.env.CLERK_WEBHOOK_SECRET;
 
     if (!WEBHOOK_SECRET) {
-      return new Error(
+      throw new Error(
         "Please aa CLERK_WEBHOOK_SECRET from Clerk Dashboard to the .env file"
       );
     }
