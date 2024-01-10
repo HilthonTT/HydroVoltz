@@ -30,23 +30,20 @@ export const ChatInput = ({ user, conversationId }: ChatInputProps) => {
 
   const [open, setOpen] = useState(false);
   const [content, setContent] = useState("");
-  const [fileUrl, setFileUrl] = useState<string | undefined>(undefined);
+  const [fileUrl, setFileUrl] = useState<string>("");
 
   const { execute, isLoading } = useAction(createDirectMessage, {
+    onSuccess: () => {
+      setContent("");
+      setFileUrl("");
+    },
     onError: (error) => {
       toast.error(error);
     },
   });
 
   const onSubmit = () => {
-    const trimmedContent = content.trim();
-    if (!trimmedContent) {
-      return;
-    }
-
     execute({ content, conversationId, userId: user.id, fileUrl });
-    setContent("");
-    setFileUrl("");
   };
 
   const onKeyDown = (e: KeyboardEvent<HTMLTextAreaElement>) => {
@@ -74,7 +71,7 @@ export const ChatInput = ({ user, conversationId }: ChatInputProps) => {
 
   return (
     <div className="mt-auto p-4 mb-2 relative">
-      <div className="flex-1 overflow-hidden rounded-lg shadow-sm">
+      <div className="flex-1 flex overflow-hidden rounded-lg shadow-sm space-x-2">
         <Textarea
           ref={textareaRef}
           id="content"
@@ -82,64 +79,58 @@ export const ChatInput = ({ user, conversationId }: ChatInputProps) => {
           value={content}
           rows={1}
           onKeyDown={onKeyDown}
-          className="block w-full resize-none"
+          className="block w-full resize-none focus-visible:ring-0 focus-visible:ring-offset-0"
           onChange={(e) => handleInputChange(e.target.value)}
         />
-        <div className="absolute top-10 right-20">
-          <div className="flex-shrink-0">
-            <DropdownMenu open={open} onOpenChange={setOpen}>
-              <DropdownMenuTrigger asChild>
-                <Button
-                  aria-label="More options"
-                  variant="ghost"
-                  className="w-auto h-auto p-1">
-                  <MoreVertical className="h-5 w-5" />
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent className="min-w-[10px]">
-                <DropdownMenuItem
-                  onClick={(e) => {
-                    e.preventDefault();
-                  }}
-                  className="w-auto">
-                  <EmojiPicker
-                    onChange={(emoji: string) =>
-                      setContent((prev) => `${prev} ${emoji}`)
-                    }
-                  />
-                </DropdownMenuItem>
-                <DropdownMenuItem
-                  onClick={(e) => {
-                    e.preventDefault();
-                  }}
-                  className="w-auto">
-                  <FilePicker
-                    onChange={(imageUrl: string) => setFileUrl(imageUrl)}
-                    isLoading={isLoading}
-                  />
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
-          </div>
+        <div className="rounded-md border border-secondary flex-shrink-0 flex items-center">
+          <Button
+            aria-label="Send message"
+            disabled={isLoading}
+            variant="ghost"
+            className="w-full h-full p-2"
+            type="submit"
+            onClick={onSubmit}>
+            {isLoading && <Loader2 className="animate-spin h-6 w-6" />}
+            {!isLoading && <Send className="h-6 w-6" />}
+          </Button>
+          <DropdownMenu open={open} onOpenChange={setOpen}>
+            <DropdownMenuTrigger asChild>
+              <Button
+                aria-label="More options"
+                variant="ghost"
+                className="w-full h-full p-2"
+                disabled={isLoading}>
+                <MoreVertical className="h-5 w-5" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent className="min-w-[10px]">
+              <DropdownMenuItem
+                onClick={(e) => {
+                  e.preventDefault();
+                }}
+                className="w-auto">
+                <EmojiPicker
+                  onChange={(emoji: string) =>
+                    setContent((prev) => `${prev} ${emoji}`)
+                  }
+                />
+              </DropdownMenuItem>
+              <DropdownMenuItem
+                onClick={(e) => {
+                  e.preventDefault();
+                }}
+                className="w-auto">
+                <FilePicker
+                  onChange={(imageUrl: string) => setFileUrl(imageUrl)}
+                  defaultValue={fileUrl}
+                  isLoading={isLoading}
+                />
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
         </div>
-        <div className="absolute top-10 right-8">
-          <div className="flex-shrink-0">
-            <Button
-              aria-label="Send message"
-              disabled={isLoading}
-              variant="ghost"
-              className="w-auto h-auto p-1"
-              type="submit"
-              onClick={onSubmit}>
-              {isLoading && <Loader2 className="animate-spin h-4 w-4" />}
-              {!isLoading && (
-                <div className="p-0">
-                  <Send className="h-6 w-6" />
-                  <span className="sr-only">Send message</span>
-                </div>
-              )}
-            </Button>
-          </div>
+        <div className="absolute top-10 right-20">
+          <div className="flex-shrink-0"></div>
         </div>
       </div>
     </div>

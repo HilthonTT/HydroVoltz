@@ -18,13 +18,18 @@ import { UploadDropzone } from "@/lib/uploadthing";
 
 interface FilePickerProps {
   onChange: (value: string) => void;
+  defaultValue: string;
   isLoading?: boolean;
 }
 
-export const FilePicker = ({ onChange, isLoading }: FilePickerProps) => {
+export const FilePicker = ({
+  onChange,
+  isLoading,
+  defaultValue,
+}: FilePickerProps) => {
   const closeRef = useRef<ElementRef<"button">>(null);
 
-  const [thumbnailUrl, setThumbnailUrl] = useState("");
+  const [thumbnailUrl, setThumbnailUrl] = useState(defaultValue || "");
 
   const onRemove = () => {
     setThumbnailUrl("");

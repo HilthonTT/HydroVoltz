@@ -88,7 +88,7 @@ export const ChatMessage = ({ message, user }: ChatMessageProps) => {
         isOwner && "justify-end"
       )}>
       {isOwner && (
-        <div className="flex flex-col p-0">
+        <div className="flex flex-col p-0 mt-auto">
           <Button
             aria-label="Delete my message"
             onClick={onDelete}
@@ -115,7 +115,7 @@ export const ChatMessage = ({ message, user }: ChatMessageProps) => {
       {!isOwner && (
         <button
           onClick={() => onUserOpen(message?.user)}
-          className="w-auto h-auto rounded-full"
+          className="w-auto h-auto rounded-full hover:opacity-75 transition"
           aria-label={`Open ${message.user}'s profile`}>
           <UserAvatar
             username={message?.user?.username}
@@ -135,7 +135,7 @@ export const ChatMessage = ({ message, user }: ChatMessageProps) => {
         <div className="rounded-md px-4 py-2 max-w-sm text-sm bg-primary/10">
           <p>{message.content}</p>
           {message.fileUrl && (
-            <div className="relative aspect-video my-4 rounded-xl border outline-dashed outline-muted">
+            <div className="relative h-32 w-32 md:h-56 md:w-56 xl:h-80 xl:w-80 my-4 rounded-xl border outline-dashed outline-muted">
               <Image
                 src={message.fileUrl}
                 alt="Image"
@@ -154,7 +154,7 @@ export const ChatMessage = ({ message, user }: ChatMessageProps) => {
       {isOwner && (
         <button
           onClick={() => onUserOpen(message?.user)}
-          className="w-auto h-auto rounded-full"
+          className="w-auto h-auto rounded-full hover:opacity-75 transition"
           aria-label="Open my profile">
           <UserAvatar
             username={message?.user?.username}
@@ -166,7 +166,7 @@ export const ChatMessage = ({ message, user }: ChatMessageProps) => {
       {!isOwner && (
         <Button
           onClick={onCopy}
-          className="opacity-0 group-hover:opacity-100 transition"
+          className="opacity-0 group-hover:opacity-100 transition mt-auto"
           size="icon"
           variant="ghost">
           {isCopied ? (
