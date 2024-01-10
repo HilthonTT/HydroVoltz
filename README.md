@@ -1,6 +1,10 @@
-# HydroVoltz Chat App
+![image](https://github.com/HilthonTT/HydroVoltz/assets/118371200/f38fa7c3-7d28-410a-b33a-9c44ad263da2)# HydroVoltz Chat App
 
 HydroVoltz is a chat application that enables you to communicate with friends via text and calls. It's built using Next.js 14 with real-time functionality powered by Pusher. The database is managed using MySQL through the Prisma ORM, styled with Tailwind CSS, and utilizes Clerk for authentication. Livekit is integrated for voice/video calls, and the logo is provided by logodust.
+
+# Demonstration
+![image](https://github.com/HilthonTT/HydroVoltz/assets/118371200/f495ab09-63b2-46a7-a788-cc50c1e28b97)
+![image](https://github.com/HilthonTT/HydroVoltz/assets/118371200/269bcd54-11b6-4ba4-ba1e-28fcb5ab4517)
 
 ## Setup
 
