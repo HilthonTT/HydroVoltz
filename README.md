@@ -59,11 +59,6 @@ npm install
 yarn install
 ```
 
-```bash
-npm install
-# or
-yarn install
-```
 
 ```bash
 npx prisma generate
