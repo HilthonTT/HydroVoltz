@@ -43,6 +43,10 @@ export const ChatInput = ({ user, conversationId }: ChatInputProps) => {
   });
 
   const onSubmit = () => {
+    if (!content || content?.length === 0) {
+      return;
+    }
+
     execute({ content, conversationId, userId: user.id, fileUrl });
   };
 
