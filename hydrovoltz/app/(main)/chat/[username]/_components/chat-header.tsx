@@ -1,16 +1,22 @@
 "use client";
 
+import Link from "next/link";
 import { User } from "@prisma/client";
+import { useUser } from "@clerk/nextjs";
+import { PhoneCall } from "lucide-react";
 
 import { UserAvatar, UserAvatarSkeleton } from "@/components/user-avatar";
 import { useUserModal } from "@/store/use-user-modal";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Button } from "@/components/ui/button";
 
 interface ChatHeaderProps {
   user: User;
 }
 
 export const ChatHeader = ({ user }: ChatHeaderProps) => {
+  const { user: self } = useUser();
+
   const { onOpen } = useUserModal((state) => state);
 
   const status =
@@ -35,6 +41,17 @@ export const ChatHeader = ({ user }: ChatHeaderProps) => {
           </p>
         </div>
       </div>
+      {!!self && self.username !== user.username && (
+        <Button
+          aria-label={`Call ${user.username}`}
+          className="hover:opacity-75 transition p-2 mr-3"
+          variant="ghost"
+          asChild>
+          <Link href={`/call/${user.username}`}>
+            <PhoneCall className="h-5 w-5" />
+          </Link>
+        </Button>
+      )}
     </div>
   );
 };

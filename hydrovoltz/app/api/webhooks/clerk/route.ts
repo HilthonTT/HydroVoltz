@@ -11,7 +11,7 @@ export async function POST(req: Request) {
 
     if (!WEBHOOK_SECRET) {
       throw new Error(
-        "Please aa CLERK_WEBHOOK_SECRET from Clerk Dashboard to the .env file"
+        "Please add CLERK_WEBHOOK_SECRET from Clerk Dashboard to the .env file"
       );
     }
 
